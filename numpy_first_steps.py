@@ -65,3 +65,68 @@ print(f'Time taken with Python arrays: {end - start} seconds')
 # Using the standard numpy array constructor
 arr = np.array(['watched', 'frozen', 'broadway', 'with', 'fam', ',', 'race', 'in', 'a', 'bit'])
 assert len(arr) == 10
+
+# You can check the data type of numpy arrays with dtype
+arr = np.array([1, 2, 3])
+assert arr.dtype == np.int64
+
+# Multi-dimensional arrays can also be created with array()
+arr = np.array([[0, 0.5, 1, 1.5], [2, 2.5, 3, 3.5]])
+
+assert arr.shape == (2, 4)
+assert arr.dtype == np.float64
+assert arr.ndim == 2
+
+# Create an array filled with zeros.
+arr = np.zeros(3)
+
+assert len(arr) == 3
+assert (arr == 0).all()
+assert arr.dtype == np.float64
+
+# Empty creates an array without initializing values.  Its content may just be garbage values.
+empty_arr = np.empty((2, 2))
+
+assert empty_arr.shape == (2, 2)
+
+# 3D array
+arr_3d = np.zeros((2, 2, 2))
+assert arr_3d.ndim == 3
+
+# Create an array filled with ones.
+ones_arr = np.ones(3)
+assert (ones_arr == 1).all()
+
+full_arr = np.full((2, 3), 4)
+
+assert full_arr.ndim == 2
+assert full_arr.shape == (2, 3)
+assert (full_arr == 4).all()
+
+# Creates an array with the following content:
+# [1, 0, 0]
+# [0, 1, 0]
+# [0, 0, 1]
+eye_arr = np.eye(3)
+id_arr = np.identity(3)
+
+assert eye_arr.shape == (3, 3)
+assert id_arr.shape == (3, 3)
+
+assert (eye_arr == [[1, 0, 0], [0, 1, 0], [0, 0, 1]]).all()
+assert (id_arr == [[1, 0, 0], [0, 1, 0], [0, 0, 1]]).all()
+
+# numpy has more data types than Python arrays, allowing for more efficient memory storage of integers, floats.
+# These data types are backed by C data types.
+arr = np.array([2, 3])
+assert arr.dtype == np.int64
+
+arr = arr.astype(np.int32)
+assert arr.dtype == np.int32
+
+# 'i2' is equivalent to np.int16
+arr = arr.astype('i2')
+assert arr.dtype == np.int16
+
+arr = arr.astype(np.int8)
+assert arr.dtype == np.int8
