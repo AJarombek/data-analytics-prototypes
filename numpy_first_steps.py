@@ -130,3 +130,123 @@ assert arr.dtype == np.int16
 
 arr = arr.astype(np.int8)
 assert arr.dtype == np.int8
+
+# Typical Python slicing...
+arr = np.arange(10)
+assert len(arr[1:4]) == 3
+assert (arr[1:4] == [1, 2, 3]).all()
+
+# ...and indexing is available for numpy arrays
+assert arr[1] == 1
+
+# Change all values in the array
+arr[:] = 2
+assert (arr == 2).all()
+
+# Without explicitly invoking copy(), slices return views (references) of the original array
+arr = np.arange(10)
+arr2 = arr[:]
+arr2[:] = 2
+assert (arr == 2).all()
+
+arr = np.arange(10)
+arr2 = arr[:].copy()
+arr2[:] = 2
+assert not (arr == 2).all()
+
+# Unlike Python arrays, slices accept comma separated values.  Each value is a slice for a dimension of the array
+arr_2d = np.array([[0, 1, 2], [3, 4, 5], [6, 7, 8]])
+assert arr_2d[1, 1] == 4
+
+full_arr = arr_2d[:, :]
+assert full_arr.shape == (3, 3)
+assert len(full_arr) == 3
+assert len(full_arr[0]) == 3
+assert (full_arr == [[0, 1, 2], [3, 4, 5], [6, 7, 8]]).all()
+
+sliced_arr = arr_2d[1:, :1]
+assert (sliced_arr == [[3], [6]]).all()
+
+sliced_arr = arr_2d[:, 2]
+assert (sliced_arr == [2, 5, 8]).all()
+
+sliced_arr = arr_2d[:, 2:]
+assert (sliced_arr == [[2], [5], [8]]).all()
+
+arr_2d[:, 2] = 10
+assert (arr_2d == [[0, 1, 10], [3, 4, 10], [6, 7, 10]]).all()
+
+# Boolean indexed arrays
+bool_idx_arr = arr_2d[2, arr_2d[2] == 6]
+assert (bool_idx_arr == [6]).all()
+
+bool_idx_arr = arr_2d[1, arr_2d[1] > 3]
+assert (bool_idx_arr == [4, 10]).all()
+
+bool_idx_arr = arr_2d[arr_2d > 3]
+assert (bool_idx_arr == [10, 4, 10, 6, 7, 10]).all()
+
+bool_idx_arr = arr_2d[~(arr_2d > 5)]
+assert (bool_idx_arr == [0, 1, 3, 4]).all()
+
+bool_idx_arr = arr_2d[(arr_2d < 2) | (arr_2d > 8)]
+assert (bool_idx_arr == [0, 1, 10, 10, 10]).all()
+
+bool_idx_arr = arr_2d[(arr_2d > 2) & (arr_2d < 8)]
+assert (bool_idx_arr == [3, 4, 6, 7]).all()
+
+arr_2d[(arr_2d > 3) & (arr_2d < 7)] = 20
+assert (arr_2d == [[0, 1, 10], [3, 20, 10], [20, 7, 10]]).all()
+
+# Fancy Indexing
+arr_2d = np.array([[11, 12, 13], [21, 22, 23], [31, 32, 33], [41, 42, 43]])
+
+indexed_arr = arr_2d[[0, 2]]
+assert (indexed_arr == [[11, 12, 13], [31, 32, 33]]).all()
+
+indexed_arr = arr_2d[[-4, -2]]
+assert (indexed_arr == [[11, 12, 13], [31, 32, 33]]).all()
+
+arr_3d = np.arange(18).reshape(2, 3, 3)
+assert (arr_3d == [
+    [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8]
+    ],
+    [
+        [9, 10, 11],
+        [12, 13, 14],
+        [15, 16, 17]
+    ]
+]).all()
+
+indexed_arr = arr_3d[[1]]
+assert (indexed_arr == [[[9, 10, 11], [12, 13, 14], [15, 16, 17]]]).all()
+
+indexed_arr = arr_3d[[0, 1], [1, 1]]
+assert (indexed_arr == [[3,  4,  5], [12, 13, 14]]).all()
+
+# Rearrange the axis.  The original shape was (X, Y, Z).  The resulting shape is (Z, X, Y)
+transposed_arr = arr_3d.transpose((2, 0, 1))
+assert (transposed_arr == [
+    [
+        [0, 3, 6],
+        [9, 12, 15]
+    ],
+    [
+        [1, 4, 7],
+        [10, 13, 16]
+    ],
+    [
+        [2, 5, 8],
+        [11, 14, 17]
+    ]
+]).all()
+
+# arange() works just like Python's range()
+arr_2d = np.arange(12, 36, 2).reshape(3, 4)
+assert (arr_2d == [[12, 14, 16, 18], [20, 22, 24, 26], [28, 30, 32, 34]]).all()
+
+arr_2d = arr_2d.T
+assert (arr_2d == [[12, 20, 28], [14, 22, 30], [16, 24, 32], [18, 26, 34]]).all()
