@@ -12,3 +12,4 @@ jupyter notebook
 
 # Modules used in Jupyter notebooks.
 pip3 install numpy
+pip3 install matplotlib
