@@ -62,3 +62,60 @@ assert not (arr <= 1).all()
 
 unique_arr = np.unique(arr)
 assert (unique_arr == [1, 2, 3, 5, 8, 13, 21, 34, 55]).all()
+
+# I hope you aren't being hard on yourself about any of it.
+# You have to do what makes you happy and I lovingly understand.
+
+# Numpy arrays provide the standard set operations
+arr1 = np.array([3, 6, 9])
+arr2 = np.array([9, 12, 15])
+
+intersect_arr = np.intersect1d(arr1, arr2)
+assert (intersect_arr == [9])
+
+union_arr = np.union1d(arr1, arr2)
+assert (union_arr == [3, 6, 9, 12, 15]).all()
+
+diff_array = np.setdiff1d(arr1, arr2)
+assert (diff_array == [3, 6]).all()
+
+diff_array = np.setdiff1d(arr2, arr1)
+assert (diff_array == [12, 15]).all()
+
+xor_array = np.setxor1d(arr1, arr2)
+assert (xor_array == [3, 6, 12, 15]).all()
+
+# Numpy allows arrays to be saved and loaded from binary files.  The following example saves and loads
+# the Fibonacci sequence array.
+np.save('fib_array', arr)
+
+loaded_arr = np.load('fib_array.npy')
+assert (loaded_arr == [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]).all()
+
+# Based on a matrix dot product example: https://www.mathsisfun.com/algebra/matrix-multiplying.html
+prices = np.array([3, 4, 2])
+sold = np.array([[13, 8, 6], [9, 7, 4], [7, 4, 0], [15, 6, 3]]).T
+
+assert (prices == [3, 4, 2]).all()
+assert (sold == [[13, 9, 7, 15], [8, 7, 4, 6], [6, 4, 0, 3]]).all()
+
+# Matrix dot products can be computed with np.dot() or the Python '@' infix operator
+dot_product = np.dot(prices, sold)
+assert (dot_product == [83, 63, 37, 75]).all()
+
+dot_product = prices @ sold
+assert (dot_product == [83, 63, 37, 75]).all()
+
+# Other linear algebra functions are provided such as matrix decomposition methods
+# (which are way above my knowledge level)
+q, r = np.linalg.qr(sold)
+print(f'Q = {q}\n')
+print(f'R = {r}\n')
+
+# Q and R can then be used to reconstruct the matrix (this is basically all I know about matrix decompositions)
+reconstructed_sold = q.dot(r)
+reconstructed_sold = np.dot(q, r)
+print(f'Q @ R = {reconstructed_sold}')
+
+reconstructed_sold = q.dot(r).astype(np.int32)
+assert (reconstructed_sold == [[13, 9, 7, 15], [8, 7, 4, 6], [6, 4, 0, 3]]).all()
