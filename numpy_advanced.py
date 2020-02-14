@@ -72,3 +72,89 @@ assert (arr4 == [
     [2, 6, 10, 14],
     [3, 7, 11, 15]
 ]).all()
+
+arr = arr.reshape((4, 4))
+
+raveled_arr = arr.ravel()
+flattened_arr = arr.flatten()
+assert (raveled_arr == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]).all()
+assert (raveled_arr == flattened_arr).all()
+
+fortran_raveled_arr = arr.ravel('F')
+assert (fortran_raveled_arr == [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15]).all()
+
+# By default arrays are concatenated on axis 0 (row) ...
+arr1 = np.array([[1], [2]])
+arr2 = np.array([[3], [4]])
+concat_arr = np.concatenate((arr1, arr2))
+assert (concat_arr == [[1], [2], [3], [4]]).all()
+
+concat_arr = np.concatenate((arr1, arr2), axis=0)
+assert (concat_arr == [[1], [2], [3], [4]]).all()
+
+# ... however they can be configured to concatenate on axis 1 (column)
+concat_arr = np.concatenate((arr1, arr2), axis=1)
+assert (concat_arr == [[1, 3], [2, 4]]).all()
+
+# Equivalent to np.concatenate() on axis 0
+concat_arr = np.vstack((arr1, arr2))
+assert (concat_arr == [[1], [2], [3], [4]]).all()
+
+# Equivalent to np.concatenate() on axis 1
+concat_arr = np.hstack((arr1, arr2))
+assert (concat_arr == [[1, 3], [2, 4]]).all()
+
+# Split an array into multiple arrays at certain indexes.
+arr = np.arange(10)
+split_arr = np.split(arr, [2, 4, 9])
+
+assert (split_arr[0] == [0, 1]).all()
+assert (split_arr[1] == [2, 3]).all()
+assert (split_arr[2] == [4, 5, 6, 7, 8]).all()
+assert (split_arr[3] == [9]).all()
+
+arr = np.arange(3).repeat(2)
+assert (arr == [0, 0, 1, 1, 2, 2]).all()
+
+repeat_arr = np.array([5]).repeat(5)
+full_arr = np.full([5], 5)
+assert (repeat_arr == [5, 5, 5, 5, 5]).all()
+assert (full_arr == [5, 5, 5, 5, 5]).all()
+
+tile_arr = np.tile(arr, (2, 1))
+assert (tile_arr == [[0, 0, 1, 1, 2, 2], [0, 0, 1, 1, 2, 2]]).all()
+
+tile_arr = np.tile(arr, (1, 2))
+assert (tile_arr == [0, 0, 1, 1, 2, 2, 0, 0, 1, 1, 2, 2]).all()
+
+# Advanced broadcasting (vectorizations performed on an array) including creating a new axis for an existing array
+arr1 = np.zeros((3, 3))
+arr2 = np.array([1, 2, 3])
+arr1[:] = arr2[:, np.newaxis]
+assert (arr1 == [[1, 1, 1], [2, 2, 2], [3, 3, 3]]).all()
+
+reduced_value = np.add.reduce(np.arange(10))
+assert reduced_value == 45
+
+# Logical AND chained with reduce() is equivalent to all()
+arr = np.array([1, 1])
+all_equal_one = np.logical_and.reduce(arr == 1)
+assert all_equal_one
+
+arr = np.arange(16).reshape((4, 4))
+
+accumulated_arr = np.add.accumulate(arr, axis=0)
+assert (accumulated_arr == [
+    [0, 1, 2, 3],
+    [4, 6, 8, 10],
+    [12, 15, 18, 21],
+    [24, 28, 32, 36]
+]).all()
+
+accumulated_arr = np.add.accumulate(arr, axis=1)
+assert (accumulated_arr == [
+    [0, 1, 3, 6],
+    [4, 9, 15, 22],
+    [8, 17, 27, 38],
+    [12, 25, 39, 54]
+]).all()
