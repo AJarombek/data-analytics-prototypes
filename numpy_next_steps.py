@@ -119,3 +119,22 @@ print(f'Q @ R = {reconstructed_sold}')
 
 reconstructed_sold = q.dot(r).astype(np.int32)
 assert (reconstructed_sold == [[13, 9, 7, 15], [8, 7, 4, 6], [6, 4, 0, 3]]).all()
+
+# Numpy random numbers are "pseudo-random"
+# (aka they use an assortment of seeds which will by themselves always produce the same numbers).
+np.random.normal(size=(2, 2))
+
+# This is proved with an explict seed instead of the 'random' libraries global random seed.
+random_generator = np.random.RandomState(2)
+
+first_rand = random_generator.randint(-1, 2, size=5)
+second_rand = random_generator.randint(-1, 2, size=5)
+
+# This random number generator will produce the same two lists as shown above.
+other_random_generator = np.random.RandomState(2)
+
+other_first_rand = other_random_generator.randint(-1, 2, size=5)
+other_second_rand = other_random_generator.randint(-1, 2, size=5)
+
+assert (first_rand == other_first_rand).all()
+assert (second_rand == other_second_rand).all()
