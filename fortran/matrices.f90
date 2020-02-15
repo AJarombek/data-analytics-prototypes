@@ -10,11 +10,13 @@ program matrices
 
     print *, "Fortran Matrices"
 
-    ! In Fortran, arrays are column major.  That means when accessing a matrix element with matrix(j, i),
-    ! j is the column and i is the row.  C is row major, so i and j are flipped.
+    ! In Fortran, arrays are column major.  That means when accessing a matrix element with matrix(i, j),
+    ! i is the column and j is the row.  C is row major, so i and j are flipped.
+    ! NOTE: Column major matrices are an implementation detail, the code behaves the same as row major matrices.
+    ! In fact, you can simply pretend i is the row and j is the column in Fortran matrices.
     do i = 1,3
         do j = 1,3
-            matrix(j, i) = (i - 1) * 3 + j
+            matrix(i, j) = (i - 1) * 3 + j
         end do
     end do
 

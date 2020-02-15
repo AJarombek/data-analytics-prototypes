@@ -158,3 +158,13 @@ assert (accumulated_arr == [
     [8, 17, 27, 38],
     [12, 25, 39, 54]
 ]).all()
+
+divide_arr = np.divide.outer(np.array([3, 6, 9]), np.array([1, 2, 3]))
+assert (divide_arr == [[3, 1.5, 1], [6, 3, 2], [9, 4.5, 3]]).all()
+
+mult_arr = np.multiply.outer(np.array([3, 6, 9]), np.array([1, 2, 3]))
+assert (mult_arr == [[3, 6, 9], [6, 12, 18], [9, 18, 27]]).all()
+
+# Reduce to the following array: [(0 + 1), (2 + 3), (4)]
+reduce_add_arr = np.add.reduceat(np.arange(5), [0, 2, 4])
+assert (reduce_add_arr == [1, 5, 4]).all()
