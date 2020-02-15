@@ -12,3 +12,5 @@ cmake ..
 make
 
 ./hello_world
+./basics
+./matrices
