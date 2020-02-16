@@ -5,6 +5,7 @@ Date: 2/14/2020
 """
 
 import numpy as np
+from timeit import default_timer as timer
 
 # Numpy arrays are made up of a pointer to data, a data type (dtype), a shape, and strides.
 # Strides are the distance it takes (in bytes) in any dimension to advance to the next element
@@ -168,3 +169,75 @@ assert (mult_arr == [[3, 6, 9], [6, 12, 18], [9, 18, 27]]).all()
 # Reduce to the following array: [(0 + 1), (2 + 3), (4)]
 reduce_add_arr = np.add.reduceat(np.arange(5), [0, 2, 4])
 assert (reduce_add_arr == [1, 5, 4]).all()
+
+# Custom ufuncs can be created with frompyfunc().  Note that these functions take a performance hit
+# compared to their numpy counterparts.  There is a way to speed up custom functions to numpy-like performance
+# with the numba library.
+
+
+def miles_to_kilometers(miles):
+    return miles * 1.609
+
+
+# Create a custom unary unfunc (takes a single argument) that converts miles to kilometers
+mile2km = np.frompyfunc(miles_to_kilometers, 1, 1)
+
+arr = np.array([1, 3, 5])
+converted_arr = mile2km(arr)
+assert (converted_arr == [1.609, 4.827, 8.045]).all()
+
+
+def comma_separated_strings(x, y):
+    return f'{x}, {y}'
+
+
+# Create a custom binary ufunc (takes two arguments) that concatenates two strings with a comma
+cs_str = np.frompyfunc(comma_separated_strings, 2, 1)
+
+arr1 = np.array(['first', 'last'])
+arr2 = np.array(['andy', 'jarombek'])
+
+cs_arr = cs_str(arr1, arr2)
+assert (cs_arr == ['first, andy', 'last, jarombek']).all()
+
+# The arrays returned from a custom frompyfunc() function always have the type object
+assert cs_str(arr1, arr2).dtype == object
+assert mile2km(arr).dtype == object
+
+# The type can be more specific with the help of the vectorize() function.
+mile2km = np.vectorize(miles_to_kilometers, otypes=[np.float64])
+converted_arr = mile2km(arr)
+assert (converted_arr == [1.609, 4.827, 8.045]).all()
+
+cs_str = np.vectorize(comma_separated_strings, otypes=[np.unicode])
+cs_arr = cs_str(arr1, arr2)
+assert (cs_arr == ['first, andy', 'last, jarombek']).all()
+
+assert converted_arr.dtype == np.float64
+assert cs_arr.dtype == '<U14'
+
+# Unfortunately, these custom ufuncs take a major performance hit
+start = timer()
+for _ in range(10000):
+    mile2km(arr)
+end = timer()
+
+# 75 ms on my machine
+print(f'Time taken with custom ufunc: {end - start} seconds')
+
+start = timer()
+for _ in range(10000):
+    arr * 1.609
+end = timer()
+
+# 11 ms on my machine
+print(f'Time taken with numpy vectorization: {end - start} seconds')
+
+# More complex data types are possible in numpy arrays
+metric_dtype = [('miles', np.int32), ('kilometers', np.float64)]
+mi_km_arr = np.array([(1, 1.609), (2, 3.218)], dtype=metric_dtype)
+assert (mi_km_arr == [(1, 1.609), (2, 3.218)]).all()
+
+assert mi_km_arr[0]['miles'] == 1
+assert mi_km_arr[0]['kilometers'] == 1.609
+assert (mi_km_arr == [1.609, 3.218]).all()
