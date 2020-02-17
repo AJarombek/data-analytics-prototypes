@@ -5,3 +5,4 @@ fortran/build
 fortran/cmake-build-debug
 c/build
 c/cmake-build-debug
+sample_mmap

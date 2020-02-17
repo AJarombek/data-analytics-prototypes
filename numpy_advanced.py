@@ -236,8 +236,101 @@ print(f'Time taken with numpy vectorization: {end - start} seconds')
 # More complex data types are possible in numpy arrays
 metric_dtype = [('miles', np.int32), ('kilometers', np.float64)]
 mi_km_arr = np.array([(1, 1.609), (2, 3.218)], dtype=metric_dtype)
-assert (mi_km_arr == [(1, 1.609), (2, 3.218)]).all()
 
 assert mi_km_arr[0]['miles'] == 1
 assert mi_km_arr[0]['kilometers'] == 1.609
-assert (mi_km_arr == [1.609, 3.218]).all()
+
+# Sort a numpy array in place, similar to Python arrays
+arr = np.array([2, 3, 1])
+arr.sort()
+assert (arr == [1, 2, 3]).all()
+
+# Sort a numpy array, returning a new array instance
+arr = np.array([2, 3, 1])
+sorted_arr = np.sort(arr)
+
+assert (sorted_arr == [1, 2, 3]).all()
+assert (arr == [2, 3, 1]).all()
+
+arr = np.array([[9, 6, 3], [8, 5, 2], [7, 4, 1]])
+sorted_arr = np.sort(arr)
+assert (sorted_arr == [[3, 6, 9], [2, 5, 8], [1, 4, 7]]).all()
+
+sorted_arr = np.sort(arr, axis=0)
+assert (sorted_arr == [[7, 4, 1], [8, 5, 2], [9, 6, 3]]).all()
+
+sorted_arr = np.sort(arr, axis=1)
+assert (sorted_arr == [[3, 6, 9], [2, 5, 8], [1, 4, 7]]).all()
+
+# An indexer produced by argsort() is used to indirectly sort an array.
+arr = np.array([6, 8, 3, 5, 1])
+indexer = arr.argsort()
+assert (indexer == [4, 2, 3, 0, 1]).all()
+
+sorted_arr = arr[indexer]
+assert (sorted_arr == [1, 3, 5, 6, 8]).all()
+
+# You can also use different sorting algorithms (defaults to quick sort)
+indexer = arr.argsort(kind='heapsort')
+assert (indexer == [4, 2, 3, 0, 1]).all()
+
+# The result is the same
+sorted_arr = arr[indexer]
+assert (sorted_arr == [1, 3, 5, 6, 8]).all()
+
+arr = np.random.randn(1000)
+
+start = timer()
+for _ in range(1000):
+    _ = arr[arr.argsort(kind='quicksort')]
+end = timer()
+
+# 36 ms on my machine
+print(f'Time taken to sort with quicksort: {end - start} seconds')
+
+start = timer()
+for _ in range(1000):
+    _ = arr[arr.argsort(kind='mergesort')]
+end = timer()
+
+# 41 ms on my machine
+print(f'Time taken to sort with mergesort: {end - start} seconds')
+
+start = timer()
+for _ in range(1000):
+    _ = arr[arr.argsort(kind='heapsort')]
+end = timer()
+
+# 62 ms on my machine
+print(f'Time taken to sort with heapsort: {end - start} seconds')
+
+# Perform a binary search on a sorted array.
+arr = np.array([1, 2, 4, 8, 16, 32, 64])
+index = arr.searchsorted(16)
+assert index == 4
+
+indexes = arr.searchsorted([2, 8, 32])
+assert (indexes == [1, 3, 5]).all()
+
+mmap = np.memmap('sample_mmap', dtype='float64', mode='w+', shape=(2, 2))
+assert mmap.shape == (2, 2)
+assert (mmap == [[0, 0], [0, 0]]).all()
+
+# Alter the memory map in-place
+mmap[0] = 1
+assert (mmap == [[1, 1], [0, 0]]).all()
+
+# Delete the memory map.  It will still exist as a binary file on disk.
+mmap.flush()
+del mmap
+
+# Prove that the memory map no longer exists in the program.
+try:
+    mmap
+
+    # This point is never reached
+    assert False
+except NameError:
+    assert True
+    print("mmap does not exist")
+
