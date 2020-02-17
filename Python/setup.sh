@@ -13,3 +13,5 @@ jupyter notebook
 # Modules used in Jupyter notebooks.
 pip3 install numpy
 pip3 install matplotlib
+pip3 install numba
+pip3 install pandas

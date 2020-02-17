@@ -334,3 +334,37 @@ except NameError:
     assert True
     print("mmap does not exist")
 
+# Revive the memory map.  Its contents are the same
+mmap = np.memmap('sample_mmap', dtype='float64', shape=(2, 2))
+assert (mmap == [[1, 1], [0, 0]]).all()
+
+# Flags provide additional information about a numpy array.
+arr = np.random.randn(10)
+assert arr.flags['C_CONTIGUOUS']
+assert arr.flags['F_CONTIGUOUS']
+
+arr = np.arange(4).reshape((2, 2))
+assert arr.flags['C_CONTIGUOUS']
+assert not arr.flags['F_CONTIGUOUS']
+
+arr = np.ones((2, 2), order='F')
+assert not arr.flags['C_CONTIGUOUS']
+assert arr.flags['F_CONTIGUOUS']
+
+# In theory summing contiguous data should be faster than non-contiguous data, however I haven't seen any
+# evidence of this.
+start = timer()
+for _ in range(1000):
+    np.ones((100, 100), order='C').sum(1)
+end = timer()
+
+# 20 ms on my machine
+print(f'Time taken to sum contiguous data: {end - start} seconds')
+
+start = timer()
+for _ in range(1000):
+    np.ones((100, 100), order='F').sum(1)
+end = timer()
+
+# 15 ms on my machine
+print(f'Time taken to sum non-contiguous data: {end - start} seconds')
