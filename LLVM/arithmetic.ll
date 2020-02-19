@@ -4,7 +4,7 @@
 ; Author: Andrew Jarombek
 ; Date: 2/17/2020
 
-declare i32 @printf(i8*, ...)
+declare i32 @printf(i32*, ...)
 
 define i32 @add(i32 %x, i32 %y) {
 entry:
@@ -20,6 +20,5 @@ entry:
 
 define i32 @main() {
     %result = call i32 @add(i32 2, i32 3)
-
     ret i32 %result
 }
