@@ -173,3 +173,81 @@ assert (frame.values == np.array([
     ['andy', 'core', '02-01-2020'],
     ['andy', 'run', '02-02-2020'],
 ])).all()
+
+data_xctf = {
+    '8K': ['24:20.80', '24:33.50', '24:58.80', None, '26:24.20'],
+    '6K': ['18:58.80', '19:10.20', '19:25.80', '20:54.00', '20:20.50'],
+    '5K': ['15:32.00', '15:39.00', '15:59.00', '17:31.60', '16:38.40'],
+    '10000m': [None, None, '31:51.73', '35:50.22', None],
+    '5000m': ['14:23.21', None, '15:27.01', '16:44.14', '15:27.64'],
+    '3000m': ['8:32.83', '8:52.60', '8:51.80', '9:47.70', '9:03.60'],
+    '1 Mile': ['4:20.59', '4:20.39', '4:40.34', '4:57.53', '4:40.76'],
+    '1500m': ['3:54.67', '3:57.78', None, '4:32.14', '4:08.17']
+}
+run_dataframe = pd.DataFrame(
+    data_xctf,
+    index=['Thomas Caulfield', 'Joseph Smith', 'Ben Fishbein', 'Lisa Grohn', 'Andy Jarombek']
+)
+
+assert (run_dataframe.columns == pd.Index(
+    ['8K', '6K', '5K', '10000m', '5000m', '3000m', '1 Mile', '1500m'],
+    dtype='object'
+)).all()
+
+assert (run_dataframe.index == pd.Index(
+    ['Thomas Caulfield', 'Joseph Smith', 'Ben Fishbein', 'Lisa Grohn', 'Andy Jarombek'],
+    dtype='object'
+)).all()
+
+small_run_dataframe = run_dataframe['Joseph Smith':'Lisa Grohn']
+assert (small_run_dataframe.index == pd.Index(['Joseph Smith', 'Ben Fishbein', 'Lisa Grohn'], dtype='object')).all()
+
+small_run_dataframe = run_dataframe[1:3]
+assert (small_run_dataframe.index == pd.Index(['Joseph Smith', 'Ben Fishbein'], dtype='object')).all()
+
+small_run_dataframe = run_dataframe.loc[:, ['8K', '6K', '5K']]
+
+assert (small_run_dataframe.columns == pd.Index(['8K', '6K', '5K'], dtype='object')).all()
+assert (small_run_dataframe.index == pd.Index(
+    ['Thomas Caulfield', 'Joseph Smith', 'Ben Fishbein', 'Lisa Grohn', 'Andy Jarombek'],
+    dtype='object'
+)).all()
+
+# Women's XC PRs
+lisa_slu_xc_prs = run_dataframe.iloc[3, [0, 1, 2]]
+assert (lisa_slu_xc_prs.values == [None, '20:54.00', '17:31.60']).all()
+
+# Men's Track PRs
+mens_slu_tf_prs = run_dataframe.iloc[np.array([0, 1, 2, 4]), np.arange(3, 8)]
+assert (mens_slu_tf_prs.columns == pd.Index(['10000m', '5000m', '3000m', '1 Mile', '1500m'], dtype='object')).all()
+assert (mens_slu_tf_prs.index == pd.Index(
+    ['Thomas Caulfield', 'Joseph Smith', 'Ben Fishbein', 'Andy Jarombek'],
+    dtype='object'
+)).all()
+
+assert run_dataframe.at['Thomas Caulfield', '5000m'] == '14:23.21'
+assert run_dataframe.iat[0, 4] == '14:23.21'
+
+data_xctf = {
+    '8K': [1460.80, 1473.50, 1498.80, np.nan, 1584.20],
+    '6K': [1138.80, 1150.20, 1165.80, 1254.00, 1220.50],
+    '5K': [932.00, 939.00, 959.00, 1051.60, 998.40]
+}
+run_sec_dataframe = pd.DataFrame(
+    data_xctf,
+    index=['Thomas Caulfield', 'Joseph Smith', 'Ben Fishbein', 'Lisa Grohn', 'Andy Jarombek']
+)
+
+# Tom and Joe's combined seconds for races.
+tom_joe_seconds: pd.Series = run_sec_dataframe.iloc[0] + run_sec_dataframe.iloc[1]
+
+assert type(tom_joe_seconds) == pd.Series
+assert (tom_joe_seconds == [2934.3, 2289.0, 1871.0]).all()
+
+# Everyones 400m pace for the 6K
+pace_per_400_6k = run_sec_dataframe.loc[:, ['6K']] / 15
+assert (pace_per_400_6k.values.astype(np.int32) == [[75], [76], [77], [83], [81]]).all()
+
+# Pace per 400m for each race.
+run_sec_dataframe / [20, 15, 12.5]
+
