@@ -91,3 +91,85 @@ assert (frame_tail.index == pd.Index([1, 2])).all()
 # Columns can be retrieved with property (dot) notation or indexing
 assert frame.time.equals(pd.Series(['20:15', '8:00', '16:00']))
 assert frame['time'].equals(pd.Series(['20:15', '8:00', '16:00']))
+
+# Set all items in the 'time' column to '10:00'
+frame['time'] = '10:00'
+assert frame['time'].equals(pd.Series(['10:00', '10:00', '10:00']))
+
+frame['time'] = np.array(['25:00', '8:00', '20:00'])
+assert frame['time'].equals(pd.Series(['25:00', '8:00', '20:00']))
+
+frame['date'] = pd.Series(['02-01-2020', '02-02-2020', '02-03-2020'], index=[1, 2, 0])
+assert frame['date'].equals(pd.Series(['02-03-2020', '02-01-2020', '02-02-2020']))
+
+columns = frame.columns
+assert (columns == pd.Index(['user', 'type', 'date', 'time'], dtype='object')).all()
+
+frame['distance'] = pd.Series([3.5, 3], index=[0, 2])
+assert frame['distance'].loc[0] == 3.5
+assert frame['distance'].isnull().loc[1] == True
+assert frame['distance'].loc[2] == 3
+
+assert (frame.columns == pd.Index(['user', 'type', 'date', 'time', 'distance'], dtype='object')).all()
+del frame['distance']
+assert (frame.columns == pd.Index(['user', 'type', 'date', 'time'], dtype='object')).all()
+
+# Transposing in pandas works just like numpy
+transposed_frame = frame.T
+assert (transposed_frame.columns == pd.Index([0, 1, 2], dtype='object')).all()
+assert (transposed_frame.index == pd.Index(['user', 'type', 'date', 'time'], dtype='object')).all()
+
+transposed_frame = frame.T.T
+assert (transposed_frame.columns == pd.Index(['user', 'type', 'date', 'time'], dtype='object')).all()
+assert (transposed_frame.index == pd.Index([0, 1, 2], dtype='object')).all()
+
+# Access all the values of a dataframe as a numpy array.
+values = frame.values
+assert (values == np.array([
+    ['andy', 'run', '02-03-2020', '25:00'],
+    ['andy', 'core', '02-01-2020', '8:00'],
+    ['andy', 'run', '02-02-2020', '20:00']
+])).all()
+
+# Indexes in pandas are immutable
+index = pd.Index(['a', 'b', 'c'])
+
+try:
+    index[3] = 'd'
+
+    # Not Reached
+    assert False
+except TypeError as e:
+    assert str(e) == 'Index does not support mutable operations'
+
+reindexed_frame = frame.reindex([1, 2, 0])
+assert (reindexed_frame.values == np.array([
+    ['andy', 'core', '02-01-2020', '8:00'],
+    ['andy', 'run', '02-02-2020', '20:00'],
+    ['andy', 'run', '02-03-2020', '25:00']
+])).all()
+
+dropped_frame = frame.drop(2)
+assert (dropped_frame.values == np.array([
+    ['andy', 'run', '02-03-2020', '25:00'],
+    ['andy', 'core', '02-01-2020', '8:00']
+])).all()
+
+dropped_frame = frame.drop([0, 2])
+assert (dropped_frame.values == np.array([
+    ['andy', 'core', '02-01-2020', '8:00']
+])).all()
+
+dropped_frame = frame.drop('user', axis=1)
+assert (dropped_frame.values == np.array([
+    ['run', '02-03-2020', '25:00'],
+    ['core', '02-01-2020', '8:00'],
+    ['run', '02-02-2020', '20:00']
+])).all()
+
+frame.drop('time', axis=1, inplace=True)
+assert (frame.values == np.array([
+    ['andy', 'run', '02-03-2020'],
+    ['andy', 'core', '02-01-2020'],
+    ['andy', 'run', '02-02-2020'],
+])).all()
