@@ -251,3 +251,52 @@ assert (pace_per_400_6k.values.astype(np.int32) == [[75], [76], [77], [83], [81]
 # Pace per 400m for each race.
 run_sec_dataframe / [20, 15, 12.5]
 
+run_seconds_dataframe = run_sec_dataframe.T
+
+fivek_200_pace = run_seconds_dataframe.loc['5K'] / 25
+assert (fivek_200_pace.values.astype(np.int32) == [37, 37, 38, 42, 39]).all()
+
+# Series and DataFrame types have methods for each arithmetic operation.
+fivek_200_pace = run_seconds_dataframe.loc['5K'].div(25)
+assert (fivek_200_pace.values.astype(np.int32) == [37, 37, 38, 42, 39]).all()
+
+mean_func = lambda x: x.mean()
+mean_run_sec = run_sec_dataframe.apply(mean_func)
+assert (mean_run_sec.values.astype(np.int32) == [1504, 1185, 976]).all()
+
+mean_run_sec = run_seconds_dataframe.apply(mean_func, axis='columns')
+assert (mean_run_sec.values.astype(np.int32) == [1504, 1185, 976]).all()
+
+sorted_run_sec = run_seconds_dataframe.sort_index()
+assert (sorted_run_sec.index == pd.Index(['5K', '6K', '8K'], dtype='object')).all()
+assert (sorted_run_sec.columns == pd.Index(
+    ['Thomas Caulfield', 'Joseph Smith', 'Ben Fishbein', 'Lisa Grohn', 'Andy Jarombek'],
+    dtype='object'
+)).all()
+
+sorted_run_sec = run_seconds_dataframe.sort_index(axis=1)
+assert (sorted_run_sec.index == pd.Index(['8K', '6K', '5K'], dtype='object')).all()
+assert (sorted_run_sec.columns == pd.Index(
+    ['Andy Jarombek', 'Ben Fishbein', 'Joseph Smith', 'Lisa Grohn', 'Thomas Caulfield'],
+    dtype='object'
+)).all()
+
+sorted_5k = run_seconds_dataframe.T.sort_values(by='5K')
+assert (sorted_5k.loc[:, ['5K']].values == [[932], [939], [959], [998.4], [1051.6]]).all()
+
+ranked_races = run_seconds_dataframe.T.rank()
+assert (ranked_races.index == pd.Index(
+    ['Thomas Caulfield', 'Joseph Smith', 'Ben Fishbein', 'Lisa Grohn', 'Andy Jarombek'],
+    dtype='object'
+)).all()
+
+# Get an overview of different statistics about the DataFrame
+described_df = run_seconds_dataframe.describe()
+assert (described_df.index == pd.Index(
+    ['count', 'mean', 'std', 'min', '25%', '50%', '75%', 'max'],
+    dtype='object'
+)).all()
+
+# Mean absolute deviation from mean value - the mean of all distances from the mean value.
+mad_df = run_seconds_dataframe.mad()
+assert (mad_df.values.astype(np.int32) == [189, 190, 193, 101, 211]).all()
