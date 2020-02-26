@@ -23,6 +23,7 @@ stuffed_animals = Table(
 meta.drop_all(engine)
 meta.create_all(engine)
 
+# Some of my stuffed friends and my sisters.
 insert_dotty = stuffed_animals.insert().values(name='Dotty', species='Horse', caretaker='Andy')
 insert_lily = stuffed_animals.insert().values(name='Lily', species='Bear', caretaker='Andy')
 insert_fluffy = stuffed_animals.insert().values(name='Fluffy', species='Goat', caretaker='Andy')

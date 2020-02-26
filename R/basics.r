@@ -11,7 +11,7 @@ name
 # Print out the class of the variable 'name'
 class(name)
 
-age <- 24
+age <- 25
 class(age)
 
 writing_r = TRUE
@@ -79,3 +79,24 @@ print(is.array(catsdogs))
 
 # f_catsdogs is a Factor.
 print(is.factor(f_catsdogs))
+
+# While DataFrame is a data structure in Python's pandas library, dataframe is built-in to R.
+date <- c("02-23-2020", "02-24-2020", "02-25-2020")
+distance <- c(12.5, 2.8, 2.8)
+runs <- data.frame(date, distance)
+
+print(runs)
+
+# Access the items in the 'distance' column of the data frame.  The returned data structure is a vector.
+distance_col <- runs$distance
+print(distance_col)
+print(is.vector(distance_col))
+
+# Another way to create a data frame.  Represents lines coded at work this week (so far).
+lines_coded = data.frame(
+  language = c('Groovy', 'Python', 'Bash', 'Gherkin', 'TOML'),
+  lines = c(183, 147, 21, 15, 14)
+)
+
+print(lines_coded)
+print(is.data.frame(lines_coded))
