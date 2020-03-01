@@ -17,7 +17,7 @@ repository:
 
 ### Directories
 
-| Directory Name    | Description                                                                                  |
+| Directory Name    | Description                                    |
 |-------------------|------------------------------------------------|
 | `C`               | Code samples / prototypes written in C.        |
 | `Fortran`         | Code samples / prototypes written in Fortran.  |

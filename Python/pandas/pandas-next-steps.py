@@ -222,3 +222,20 @@ assert (all_trails.values == np.array([
     ['Wild Turkey', 'black diamond'],
     ['Winding Brook', 'green']
 ], dtype=object)).all()
+
+mile_races = pd.DataFrame({
+    'race': ['NYRR Night at the Races #1', 'Ocean Breeze Miles Mania #4'],
+    '209m': ['39.447 (39.447)', '37.615 (37.615)'],
+    '409m': ['1:16.524 (37.077)', '1:14.048 (36.433)'],
+    '609m': ['1:53.254 (36.730)', '1:50.689 (36.641)'],
+    '809m': ['2:30.180 (36.926)', '2:26.830 (36.141)'],
+    '1009m': ['3:06.899 (36.720)', '3:02.024 (35.194)'],
+    '1209m': ['3:43.565 (36.667)', '3:37.905 (35.881)'],
+    '1409m': ['4:19.249 (35.684)', '4:13.632 (35.727)'],
+    '1609m': ['4:54.247 (34.999)', '4:47.750 (34.118)']
+})
+
+melted_mile_races = pd.melt(mile_races, ['race'])
+assert (melted_mile_races.columns == ['race', 'variable', 'value']).all()
+assert (melted_mile_races.iloc[0] == ['NYRR Night at the Races #1', '209m', '39.447 (39.447)']).all()
+assert (melted_mile_races.iloc[1] == ['Ocean Breeze Miles Mania #4', '209m', '37.615 (37.615)']).all()
