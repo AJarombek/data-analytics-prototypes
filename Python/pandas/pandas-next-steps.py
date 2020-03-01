@@ -138,7 +138,87 @@ assert (merged.values == np.array([
     ['fish', 'Benjamin', 'Fishbein', '2020-02-28', 5.0, 30, 10]
 ], dtype=object)).all()
 
-# Implicitly perform an inner join on the 'username' column in users and runs.  This is equivalent to the first merge.
+# Explicitly perform an inner join on the 'username' column in users and runs.  This is equivalent to the first merge.
 inner_merged = pd.merge(users, runs, how='inner')
 
 assert (merged.values == inner_merged.values).all()
+
+# Explicitly perform an outer join on the 'username' column in users and runs.
+outer_merged = pd.merge(users, runs, how='outer')
+assert outer_merged.iloc[0].values[0] == 'andy'
+assert outer_merged.iloc[1].values[0] == 'andy'
+assert outer_merged.iloc[2].values[0] == 'joe'
+assert outer_merged.iloc[3].values[0] == 'tom'
+assert outer_merged.iloc[4].values[0] == 'fish'
+
+# Implicitly perform an inner join on explicitly declared 'username' columns.
+merged_on = pd.merge(users, runs, left_on='username', right_on='username')
+
+assert (merged.values == merged_on.values).all()
+
+# Some ski trails I went on.
+morning = pd.Series(['Left Bank', 'West Way', 'Winding Brook', 'Panorama', 'Wild Turkey', 'Cutter'])
+afternoon = pd.Series(['Wild Turkey', 'Jericho', 'Bear Crossing', 'Upper Whitetail', 'Lower Whitetail'])
+
+concat_trails = pd.concat([morning, afternoon])
+assert (concat_trails == [
+    'Left Bank', 'West Way', 'Winding Brook', 'Panorama', 'Wild Turkey', 'Cutter',
+    'Wild Turkey', 'Jericho', 'Bear Crossing', 'Upper Whitetail', 'Lower Whitetail'
+]).all()
+
+# Passing axis=1 as a parameter concatenates along the x-axis (concats columns), resulting in a data frame.
+concat_trails = pd.concat([morning, afternoon], axis=1)
+concat_trails = concat_trails.fillna(value='')
+assert (concat_trails.values == np.array([
+    ['Left Bank', 'Wild Turkey'],
+    ['West Way', 'Jericho'],
+    ['Winding Brook', 'Bear Crossing'],
+    ['Panorama', 'Upper Whitetail'],
+    ['Wild Turkey', 'Lower Whitetail'],
+    ['Cutter', '']
+], dtype=object)).all()
+
+# By default concat with axis=1 performs an outer join on the indexes of each original Series.
+concat_trails_outer = pd.concat([morning, afternoon], axis=1, join='outer')
+concat_trails_outer = concat_trails_outer.fillna(value='')
+
+assert (concat_trails.values == concat_trails_outer.values).all()
+
+# This behavior can be altered by passing join='inner' as an argument.
+concat_trails_inner = pd.concat([morning, afternoon], axis=1, join='inner')
+assert (concat_trails_inner.values == np.array([
+    ['Left Bank', 'Wild Turkey'],
+    ['West Way', 'Jericho'],
+    ['Winding Brook', 'Bear Crossing'],
+    ['Panorama', 'Upper Whitetail'],
+    ['Wild Turkey', 'Lower Whitetail']
+], dtype=object)).all()
+
+indexed_concat = pd.concat([morning, afternoon], keys=['morning', 'afternoon'])
+assert (indexed_concat.index.get_level_values(0).values == [
+    'morning', 'morning', 'morning', 'morning', 'morning', 'morning',
+    'afternoon', 'afternoon', 'afternoon', 'afternoon', 'afternoon'
+]).all()
+
+morning_frame = morning.to_frame()
+morning_frame['grade'] = ['green', 'blue', 'green', 'blue', 'black diamond', 'black diamond']
+morning_frame = morning_frame.set_index([0])
+
+afternoon_frame = afternoon.to_frame()
+afternoon_frame['grade'] = ['black diamond', 'double black diamond', 'blue black', 'black diamond', 'black diamond']
+afternoon_frame = afternoon_frame.set_index([0])
+
+all_trails: pd.DataFrame = morning_frame.combine_first(afternoon_frame)
+all_trails = all_trails.reset_index()
+assert (all_trails.values == np.array([
+    ['Bear Crossing', 'blue black'],
+    ['Cutter', 'black diamond'],
+    ['Jericho', 'double black diamond'],
+    ['Left Bank', 'green'],
+    ['Lower Whitetail', 'black diamond'],
+    ['Panorama', 'blue'],
+    ['Upper Whitetail', 'black diamond'],
+    ['West Way', 'blue'],
+    ['Wild Turkey', 'black diamond'],
+    ['Winding Brook', 'green']
+], dtype=object)).all()
