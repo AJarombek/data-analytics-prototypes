@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 basic_plot = plt.plot(np.array([1, 2, 1]))
 assert type(basic_plot) == list
@@ -107,3 +108,32 @@ colors = {
     'Andy Jarombek': '#4180b1'
 }
 run_sec_dataframe.plot.scatter(x='index', y='value', c=run_sec_dataframe['index'].apply(lambda x: colors[x]))
+
+"""
+Bar plots can be created either vertically or horizontally.
+"""
+
+# You are always cared for, no matter what.
+
+df.plot.bar(color='green', alpha=0.5)
+
+# Create a horizontal bar chart, with the first of the month coming at the top.
+# CSS built-in colors can be used.
+df[::-1].plot.barh(color='aquamarine', alpha=0.5, figsize=(10, 10))
+
+# Reverse the dataframe
+reversed_df = df[::-1].head()
+assert (reversed_df.values == [[3.45], [2.81], [2.81], [12.59], [7.87]]).all()
+
+reset_index_df = df.reset_index()
+
+"""
+Demonstrate a few charts using the seaborn library.
+"""
+
+# Seaborn adds some default styles to matplotlib charts.
+_, ax = plt.subplots(figsize=(10, 10))
+sns.barplot(y='index', x='runs', data=df.reset_index(), orient='h', ax=ax)
+
+# Seaborn also provides additional plots, such as a facet grid plot
+sns.catplot(y='variable', x='value', data=run_sec_dataframe, kind='box')
