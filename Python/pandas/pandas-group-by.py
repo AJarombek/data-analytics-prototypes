@@ -133,3 +133,102 @@ grouping_nan_value = lines_coded_nan_melted['value'].groupby(lines_coded_nan_mel
 years_coded_2 = grouping_nan_value.count()
 
 assert (years_coded.values == years_coded_2.values).all()
+
+# Multiple aggregations can be used on groupings.
+max_lines = grouping.agg('max')['value']
+
+assert (max_lines.reset_index().values == np.array([
+    ['Groovy', 2324],
+    ['HCL', 4089],
+    ['HTML', 10833],
+    ['Java', 12962],
+    ['JavaScript', 16414],
+    ['PHP', 5433],
+    ['Python', 20192],
+    ['SQL', 2622],
+    ['Sass', 4468],
+    ['Swift', 10726]
+], dtype=object)).all()
+
+multiple_aggregations = grouping.agg(['max', 'min', 'mean'])['value'].reset_index()
+multiple_aggregations['mean'] = multiple_aggregations['mean'].apply(lambda x: int(x))
+
+assert (multiple_aggregations.values == np.array([
+    ['Groovy', 2324, 0, 776],
+    ['HCL', 4089, 0, 1317],
+    ['HTML', 10833, 0, 2775],
+    ['Java', 12962, 1585, 5973],
+    ['JavaScript', 16414, 0, 6208],
+    ['PHP', 5433, 0, 1402],
+    ['Python', 20192, 0, 4167],
+    ['SQL', 2622, 0, 892],
+    ['Sass', 4468, 0, 1365],
+    ['Swift', 10726, 0, 1947]
+], dtype=object)).all()
+
+
+def most(df: pd.DataFrame, column: str = 'value') -> pd.DataFrame:
+    """
+    Sort the DataFrame by a column, and then return the row with the largest value for that column.
+    :param df: The DataFrame to sort.
+    :param column: The column to sort upon.
+    :return: A new DataFrame with a single row.
+    """
+    return df.sort_values(by=column)[-1:]
+
+
+def least(df: pd.DataFrame, column: str = 'value') -> pd.DataFrame:
+    """
+    Sort the DataFrame by a column, and then return the row with the smallest value for that column.
+    :param df: The DataFrame to sort.
+    :param column: The column to sort upon.
+    :return: A new DataFrame with a single row.
+    """
+    return df.sort_values(by=column)[:1]
+
+
+most_lines_ever_written = most(melted, 'value')
+least_lines_ever_written = least(melted, 'value')
+
+assert (most_lines_ever_written.values == np.array([
+    ['Python', '2019', 20192]
+], dtype=object)).all()
+
+assert (least_lines_ever_written.values == np.array([
+    ['JavaScript', '2014', 0]
+], dtype=object)).all()
+
+best_year_each_language = melted.groupby('index').apply(most)
+worst_year_each_language = melted.groupby('index').apply(least)
+
+assert (best_year_each_language.values == np.array([
+    ['Groovy', '2019', 2324],
+    ['HCL', '2019', 4089],
+    ['HTML', '2018', 10833],
+    ['Java', '2016', 12962],
+    ['JavaScript', '2018', 16414],
+    ['PHP', '2016', 5433],
+    ['Python', '2019', 20192],
+    ['SQL', '2019', 2622],
+    ['Sass', '2019', 4468],
+    ['Swift', '2017', 10726]
+], dtype=object)).all()
+
+print(worst_year_each_language.values)
+
+assert (worst_year_each_language.values == np.array([
+    ['Groovy', '2014', 0],
+    ['HCL', '2014', 0],
+    ['HTML', '2014', 0],
+    ['Java', '2015', 1585],
+    ['JavaScript', '2014', 0],
+    ['PHP', '2014', 0],
+    ['Python', '2014', 0],
+    ['SQL', '2014', 0],
+    ['Sass', '2014', 0],
+    ['Swift', '2014', 0]
+], dtype=object)).all()
+
+# Same values as the above best year language groupby operation, except without the combined index.
+best_year_each_language_simple_index = melted.groupby('index', group_keys=False).apply(most)
+assert (best_year_each_language.values == best_year_each_language_simple_index.values).all()
