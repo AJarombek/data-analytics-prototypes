@@ -57,3 +57,79 @@ assert (mean_lines.reset_index().values == np.array([
     ['Sass', 1365.142857142857],
     ['Swift', 1947.4285714285713]
 ], dtype=object)).all()
+
+# Check the datatype of a grouping object
+assert type(grouping) is pd.core.groupby.generic.DataFrameGroupBy
+
+# Loop through each grouping object.  Prove it is made up of a string name and a DataFrame group.
+for name, group in grouping:
+    assert type(name) is str
+    assert type(group) is pd.DataFrame
+    print(name)
+    print(group)
+
+# Covert all 0 values in the DataFrame to NaN.
+lines_coded_nan = lines_coded[lines_coded.apply(lambda x: x > 0)]
+
+# Melt these values as I did in the above example.
+lines_coded_nan_melted = pd.melt(lines_coded_nan.reset_index(), ['index'])
+
+grouping_nan = lines_coded_nan_melted.groupby('index')
+
+# 'count' will exclude NaN values.
+years_coded = grouping_nan.count()
+assert (
+    years_coded.index == ['Groovy', 'HCL', 'HTML', 'Java', 'JavaScript', 'PHP', 'Python', 'SQL', 'Sass', 'Swift']
+).all()
+
+assert (years_coded.values == np.array([
+    [7, 5],
+    [7, 3],
+    [7, 5],
+    [7, 7],
+    [7, 5],
+    [7, 4],
+    [7, 6],
+    [7, 6],
+    [7, 4],
+    [7, 3]
+], dtype=object)).all()
+
+# 'count' does not exclude 0 values.
+years_in_data_frame = grouping.count()
+
+assert (years_in_data_frame.reset_index().values == np.array([
+    ['Groovy', 7, 7],
+    ['HCL', 7, 7],
+    ['HTML', 7, 7],
+    ['Java', 7, 7],
+    ['JavaScript', 7, 7],
+    ['PHP', 7, 7],
+    ['Python', 7, 7],
+    ['SQL', 7, 7],
+    ['Sass', 7, 7],
+    ['Swift', 7, 7]
+], dtype=object)).all()
+
+# The results of a groupby operation can be indexed.
+grouping_nan_value = lines_coded_nan_melted.groupby('index')['value']
+years_coded = grouping_nan_value.count()
+
+assert (years_coded.reset_index().values == np.array([
+    ['Groovy', 5],
+    ['HCL', 3],
+    ['HTML', 5],
+    ['Java', 7],
+    ['JavaScript', 5],
+    ['PHP', 4],
+    ['Python', 6],
+    ['SQL', 6],
+    ['Sass', 4],
+    ['Swift', 3]
+], dtype=object)).all()
+
+# The above groupby indexing operation is syntactic sugar for the following groupby statement
+grouping_nan_value = lines_coded_nan_melted['value'].groupby(lines_coded_nan_melted['index'])
+years_coded_2 = grouping_nan_value.count()
+
+assert (years_coded.values == years_coded_2.values).all()
