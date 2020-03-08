@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from pandas._libs.tslibs.timestamps import Timestamp
+from pandas.tseries.offsets import Hour, Minute, MonthEnd
 
 # You are always loved.  Do what brings you joy.
 
@@ -62,3 +63,59 @@ assert (ski_trip == ski_trip_3).all()
 
 # Sundays in March.
 march_sundays = pd.date_range('2020-03-01', '2020-03-31', freq='W-SUN')
+
+hour = Hour()
+assert type(hour).mro()[0] == Hour
+assert str(hour) == '<Hour>'
+
+twelve_hours = Hour(12)
+thirty_one_minutes = Minute(31)
+
+combined_time = twelve_hours + thirty_one_minutes
+assert str(combined_time) == '<751 * Minutes>'
+
+intervals = pd.date_range('2020-02-25', '2020-02-27', freq='12h31min')
+intervals2 = pd.date_range('2020-02-25', '2020-02-27', freq=Hour(12) + Minute(31))
+assert (intervals == intervals2).all()
+
+mile_races_seconds = pd.Series(
+    np.array([294, 287, 292, 288]),
+    [datetime(2019, 12, 20), datetime(2020, 2, 13), datetime(2020, 2, 27), datetime(2020, 3, 5)]
+)
+
+assert (mile_races_seconds.values == [294, 287, 292, 288]).all()
+
+mile_races_sec_frame = mile_races_seconds.to_frame()
+mile_races_sec_frame.columns = ['seconds']
+assert type(mile_races_sec_frame) == pd.DataFrame
+
+mile_races_sec_frame['sec_diff'] = \
+    mile_races_sec_frame['seconds'] - mile_races_sec_frame['seconds'].shift(1)
+
+mile_races_sec_frame['percent_diff'] = \
+    (mile_races_sec_frame['seconds'] / mile_races_sec_frame['seconds'].shift(1) - 1) * 100
+
+assert str(mile_races_sec_frame.values[1]) == '[287.          -7.          -2.38095238]'
+assert str(mile_races_sec_frame.values[2]) == '[292.           5.           1.74216028]'
+assert str(mile_races_sec_frame.values[3]) == '[288.          -4.          -1.36986301]'
+
+# Calculate the average seconds for mile races in each month.
+month_offset = MonthEnd()
+avg_per_month = mile_races_seconds.to_frame().groupby(month_offset.rollforward).mean()
+
+assert (avg_per_month.values == [[294], [289.5], [288]]).all()
+
+# By default, time series do not store timezone information
+assert avg_per_month.index.tz is None
+
+avg_per_month = avg_per_month.reset_index()
+avg_per_month.columns = ['month', 'average time']
+
+print(avg_per_month['average time'].values)
+assert (avg_per_month['average time'].values == [294, 289.5, 288]).all()
+
+# Reset the index back to the time series
+avg_per_month = avg_per_month.set_index(['month'])
+
+# Localize the time series to NYC time.
+avg_per_month.tz_localize('America/New_York')
