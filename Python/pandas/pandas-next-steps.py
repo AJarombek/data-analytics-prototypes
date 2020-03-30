@@ -239,3 +239,9 @@ melted_mile_races = pd.melt(mile_races, ['race'])
 assert (melted_mile_races.columns == ['race', 'variable', 'value']).all()
 assert (melted_mile_races.iloc[0] == ['NYRR Night at the Races #1', '209m', '39.447 (39.447)']).all()
 assert (melted_mile_races.iloc[1] == ['Ocean Breeze Miles Mania #4', '209m', '37.615 (37.615)']).all()
+
+races = pd.value_counts(mile_races['race'])
+assert (races.values == [1, 1]).all()
+
+laps_per_race = pd.value_counts(pd.melt(mile_races, ['race'])['race'])
+assert (laps_per_race.values == [8, 8]).all()

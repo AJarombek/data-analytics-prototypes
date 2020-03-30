@@ -138,3 +138,63 @@ other_second_rand = other_random_generator.randint(-1, 2, size=5)
 
 assert (first_rand == other_first_rand).all()
 assert (second_rand == other_second_rand).all()
+
+# Broadcasting [2 x 3] and [2 x 3].
+arr1 = np.arange(6).reshape((2, 3))
+arr2 = np.ones(6).reshape((2, 3))
+
+assert arr1.shape == (2, 3)
+assert arr2.shape == (2, 3)
+
+result = arr1 + arr2
+
+assert result.shape == (2, 3)
+
+# Broadcasting [2 x 3 x 4] and [3 x 4].
+arr1 = np.arange(24).reshape((2, 3, 4))
+arr2 = np.arange(12).reshape((3, 4))
+
+assert arr1.shape == (2, 3, 4)
+assert arr2.shape == (3, 4)
+
+result = arr1 - arr2
+
+assert result.shape == (2, 3, 4)
+
+# Broadcasting [2 x 3] and [3 x 2].
+arr1 = np.arange(6).reshape((2, 3))
+arr2 = np.arange(6).reshape((3, 2))
+
+assert arr1.shape == (2, 3)
+assert arr2.shape == (3, 2)
+
+try:
+    result = arr1 + arr2
+
+    # This point will never be reached.
+    assert False
+
+except ValueError as e:
+    assert str(e).strip() == 'operands could not be broadcast together with shapes (2,3) (3,2)'
+
+# Broadcasting [2 x 3] and [2 x 1].
+arr1 = np.arange(6).reshape((2, 3))
+arr2 = np.arange(1, 3).reshape((2, 1))
+
+assert arr1.shape == (2, 3)
+assert arr2.shape == (2, 1)
+
+result = arr1 + arr2
+
+assert result.shape == (2, 3)
+
+# Broadcasting [2 x 3 x 4] and [1 x 4].
+arr1 = np.arange(24).reshape((2, 3, 4))
+arr2 = np.arange(1, 5).reshape((1, 4))
+
+assert arr1.shape == (2, 3, 4)
+assert arr2.shape == (1, 4)
+
+result = arr1 * arr2
+
+assert result.shape == (2, 3, 4)

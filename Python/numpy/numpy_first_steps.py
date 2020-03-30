@@ -28,11 +28,38 @@ arr = np.arange(10)
 mult_arr = arr * 2
 assert (mult_arr == [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]).all()
 
+# Equivalent operation using native Python arrays/lists.
+native_arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+
+def mult_by_2(arr: list, val: int) -> list:
+    new_arr = arr.copy()
+
+    for i in range(len(new_arr)):
+        new_arr[i] *= val
+
+    return new_arr
+
+
+new_native_arr = mult_by_2(native_arr, 2)
+assert new_native_arr == [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
+
 div_arr = arr / 2
 assert (div_arr == [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5]).all()
 
 mod_arr = arr % 3
 assert (mod_arr == [0, 1, 2, 0, 1, 2, 0, 1, 2, 0]).all()
+
+arr_vectorization = arr * arr
+assert (arr_vectorization == [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]).all()
+
+
+def mult_together(arr1: list, arr2: list) -> list:
+    return [arr1[i] * arr2[i] for i in range(len(arr1))]
+
+
+mult_together_arr = mult_together(native_arr, native_arr)
+assert mult_together_arr == [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
 
 # Vectorization operations create a new view of the array - they don't alter the original array.
 assert (arr == [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]).all()
