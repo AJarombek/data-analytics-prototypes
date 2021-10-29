@@ -17,10 +17,11 @@ repository:
 
 ### Directories
 
-| Directory Name    | Description                                    |
-|-------------------|------------------------------------------------|
-| `C`               | Code samples / prototypes written in C.        |
-| `Fortran`         | Code samples / prototypes written in Fortran.  |
-| `LLVM`            | Code samples / prototypes written in LLVM.     |
-| `Python`          | Code samples / prototypes written in Python.   |
-| `R`               | Code samples / prototypes written in R.        |
+| Directory Name    | Description                                                                                              |
+|-------------------|----------------------------------------------------------------------------------------------------------|
+| `Airflow`         | Code samples for Airflow, which contains DAG files written in Python but otherwise is language agnostic. |
+| `C`               | Code samples / prototypes written in C.                                                                  |
+| `Fortran`         | Code samples / prototypes written in Fortran.                                                            |
+| `LLVM`            | Code samples / prototypes written in LLVM.                                                               |
+| `Python`          | Code samples / prototypes written in Python.                                                             |
+| `R`               | Code samples / prototypes written in R.                                                                  |

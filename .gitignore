@@ -7,3 +7,5 @@ c/build
 c/cmake-build-debug
 test.sqlite
 sample_mmap
+__pycache__
+venv
