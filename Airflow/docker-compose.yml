@@ -41,7 +41,8 @@ services:
     image: *airflow_image
     restart: always
     depends_on:
-      - postgres
+      init:
+        condition: service_completed_successfully
     ports:
       - "8080:8080"
     volumes:
@@ -50,6 +51,11 @@ services:
       - airflow-net
     environment: *airflow_environment
     command: webserver
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
   scheduler:
     image: *airflow_image
@@ -64,6 +70,11 @@ services:
       - airflow-net
     environment: *airflow_environment
     command: scheduler
+    healthcheck:
+      test: ["CMD-SHELL", 'airflow jobs check --job-type SchedulerJob --hostname "$${HOSTNAME}"']
+      interval: 10s
+      timeout: 10s
+      retries: 5
 
 volumes:
   logs:
