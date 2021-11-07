@@ -27,7 +27,7 @@ def get_ethereum_price():
     if len(eth_info) == 0:
         print(f"Ethereum Price Not Found")
     else:
-        price = "${:,.2f}".format(eth_info[0].get('lastPrice'))
+        price = "${:,.2f}".format(float(eth_info[0].get('lastPrice')))
         print(f"Ethereum Price: {price}")
 
 

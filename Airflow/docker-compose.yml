@@ -1,14 +1,17 @@
-# Docker Compose configuration for Apache Airflow.
+# Docker Compose configuration for Apache Airflow using a celery executor.
 # Author: Andrew Jarombek
-# Date: 10/28/2021
+# Date: 11/6/2021
 
 version: '3.8'
 
 x-environment: &airflow_environment
-  - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+  - AIRFLOW__CORE__EXECUTOR=CeleryExecutor
+  - AIRFLOW__CELERY__RESULT_BACKEND=db+postgresql://airflow:airflow@postgres/airflow
+  - AIRFLOW__CELERY__BROKER_URL=redis://:@redis:6379/0
+  - AIRFLOW__CORE__FERNET_KEY=''
   - AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS=False
   - AIRFLOW__CORE__LOAD_EXAMPLES=False
-  - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql://airflow:airflow@postgres:5432/airflow
+  - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
   - AIRFLOW__CORE__STORE_DAG_CODE=True
   - AIRFLOW__CORE__STORE_SERIALIZED_DAGS=True
   - AIRFLOW__WEBSERVER__EXPOSE_CONFIG=True
@@ -26,6 +29,23 @@ services:
       - airflow-net
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 5s
+      retries: 5
+
+  redis:
+    image: redis:latest
+    expose:
+      - 6379
+    restart: always
+    networks:
+      - airflow-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 30s
+      retries: 50
 
   init:
     image: *airflow_image
@@ -41,6 +61,10 @@ services:
     image: *airflow_image
     restart: always
     depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
       init:
         condition: service_completed_successfully
     ports:
@@ -61,6 +85,10 @@ services:
     image: *airflow_image
     restart: always
     depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
       init:
         condition: service_completed_successfully
     volumes:
@@ -75,6 +103,74 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
+
+  worker:
+    image: *airflow_image
+    restart: always
+    command: celery worker
+    healthcheck:
+      test: ["CMD-SHELL", 'celery --app airflow.executors.celery_executor.app inspect ping -d "celery@$${HOSTNAME}"']
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    environment: *airflow_environment
+    networks:
+      - airflow-net
+    volumes:
+      - logs:/opt/airflow/logs
+      - ./dags:/opt/airflow/dags
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      init:
+        condition: service_completed_successfully
+
+  triggerer:
+    image: *airflow_image
+    restart: always
+    command: triggerer
+    healthcheck:
+      test: ["CMD-SHELL", 'airflow jobs check --job-type TriggererJob --hostname "$${HOSTNAME}"']
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    environment: *airflow_environment
+    networks:
+      - airflow-net
+    volumes:
+      - logs:/opt/airflow/logs
+      - ./dags:/opt/airflow/dags
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      init:
+        condition: service_completed_successfully
+
+  flower:
+    image: *airflow_image
+    restart: always
+    command: celery flower
+    ports:
+      - 5555:5555
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:5555/"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    environment: *airflow_environment
+    networks:
+      - airflow-net
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      init:
+        condition: service_completed_successfully
 
 volumes:
   logs:
