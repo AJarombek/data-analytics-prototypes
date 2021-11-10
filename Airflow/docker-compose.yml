@@ -15,6 +15,8 @@ x-environment: &airflow_environment
   - AIRFLOW__CORE__STORE_DAG_CODE=True
   - AIRFLOW__CORE__STORE_SERIALIZED_DAGS=True
   - AIRFLOW__WEBSERVER__EXPOSE_CONFIG=True
+  - _PIP_ADDITIONAL_REQUIREMENTS=apache-airflow-providers-postgres==2.3.0
+  - AIRFLOW_CONN_POSTGRES_DEFAULT=postgresql://airflow:airflow@postgres/airflow
 
 x-airflow-image: &airflow_image apache/airflow:2.2.0-python3.8
 

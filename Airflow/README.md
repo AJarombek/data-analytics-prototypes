@@ -35,3 +35,4 @@ poetry install
 | `poetry.lock`        | Lock file containing Python dependencies installed by Poetry.                           |
 | `pyproject.toml`     | [Poetry](https://python-poetry.org/) dependency management configuration file.          |
 | `dags`               | Directory holding Python DAG files.                                                     |
+| `local-executor`     | Alternative Docker compose file which uses a local executor.                            |
