@@ -28,7 +28,7 @@ with DAG(
     schedule_interval=timedelta(hours=12),
     default_view="graph",
     is_paused_upon_creation=False,
-    tags=["sample"]
+    tags=["sample", "python"]
 ) as dag:
     task = PythonOperator(task_id='python_task', python_callable=get_bitcoin_price)
 

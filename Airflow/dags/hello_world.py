@@ -30,7 +30,7 @@ with DAG(
     start_date=days_ago(1),
     schedule_interval=None,
     default_view="graph",
-    tags=["sample"]
+    tags=["sample", "python", "bash"]
 ) as dag:
     bash_task = BashOperator(task_id='bash_task', bash_command='echo "Hello from Airflow!"')
     python_task = PythonOperator(task_id='python_task', python_callable=task)

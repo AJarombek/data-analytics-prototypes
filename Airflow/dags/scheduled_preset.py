@@ -34,7 +34,7 @@ with DAG(
     schedule_interval="@once",
     default_view="graph",
     is_paused_upon_creation=True,
-    tags=["sample"]
+    tags=["sample", "python"]
 ) as dag:
     task = PythonOperator(task_id='python_task', python_callable=get_bitcoin_price)
 
