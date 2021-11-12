@@ -11,6 +11,8 @@ from airflow.operators.python import PythonOperator
 from airflow.providers.postgres.operators.postgres import PostgresOperator
 from airflow.utils.dates import days_ago
 
+from fan_in_out.utils import get_ethereum_price, get_bitcoin_price
+
 
 default_args = {
     'owner': 'airflow',
@@ -32,29 +34,39 @@ with DAG(
     create_table_task = PostgresOperator(
         task_id='create_table_task',
         postgres_conn_id='postgres_default',
-        sql='fan_in_out/create_price_table.sql'
+        sql='sql/create_price_table.sql'
     )
 
-    bitcoin_task = PostgresOperator(
-        task_id='bitcoin_task',
+    get_bitcoin_price_task = PythonOperator(task_id='get_bitcoin_price_task', python_callable=get_bitcoin_price)
+
+    insert_bitcoin_task = PostgresOperator(
+        task_id='insert_bitcoin_task',
         postgres_conn_id='postgres_default',
-        sql='fan_in_out/insert_bitcoin_price.sql',
-        parameters={'price': '', 'time': ''}
+        sql='sql/insert_bitcoin_price.sql',
+        parameters={
+            'price': '{{ti.xcom_pull(task_ids="get_bitcoin_price_task", key="return_value")}}',
+            'time': '{{ts}}'
+        }
     )
 
-    ethereum_task = PostgresOperator(
-        task_id='ethereum_task',
+    get_ethereum_price_task = PythonOperator(task_id='get_ethereum_price_task', python_callable=get_ethereum_price)
+
+    insert_ethereum_task = PostgresOperator(
+        task_id='insert_ethereum_task',
         postgres_conn_id='postgres_default',
         sql='fan_in_out/insert_ethereum_price.sql',
-        parameters={'price': '', 'time': ''}
+        parameters={
+            'price': '{{ti.xcom_pull(task_ids="get_ethereum_price_task", key="return_value")}}',
+            'time': '{{ts}}'
+        }
     )
 
     select_prices_task = PostgresOperator(
         task_id='select_prices_task',
         postgres_conn_id='postgres_default',
-        sql='fan_in_out/select_prices.sql'
+        sql='sql/select_prices.sql'
     )
 
-    create_table_task >> [bitcoin_task, ethereum_task]
-    bitcoin_task >> select_prices_task
-    ethereum_task >> select_prices_task
+    create_table_task >> [get_bitcoin_price_task, get_ethereum_price_task]
+    get_bitcoin_price_task >> insert_bitcoin_task >> select_prices_task
+    get_ethereum_price_task >> insert_ethereum_task >> select_prices_task

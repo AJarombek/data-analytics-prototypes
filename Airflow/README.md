@@ -27,6 +27,12 @@ poetry shell
 poetry install
 ```
 
+**Generate Fernet Key**
+
+```bash
+python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+```
+
 ### Files
 
 | Filename             | Description                                                                             |

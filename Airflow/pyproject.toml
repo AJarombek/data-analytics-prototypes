@@ -12,6 +12,7 @@ authors = ["Andrew Jarombek <andrew@jarombek.com>"]
 python = "^3.8"
 apache-airflow = "^2.2.0"
 apache-airflow-providers-postgres = "^2.3.0"
+cryptography = "^35.0.0"
 
 [tool.poetry.dev-dependencies]
 

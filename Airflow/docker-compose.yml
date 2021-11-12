@@ -17,6 +17,7 @@ x-environment: &airflow_environment
   - AIRFLOW__WEBSERVER__EXPOSE_CONFIG=True
   - _PIP_ADDITIONAL_REQUIREMENTS=apache-airflow-providers-postgres==2.3.0
   - AIRFLOW_CONN_POSTGRES_DEFAULT=postgresql://airflow:airflow@postgres/airflow
+  - AIRFLOW__CORE__FERNET_KEY=EJ7tt4r06HhjniZKjNICTqaOGotA2Jfa9EF7KyW-7Wc=
 
 x-airflow-image: &airflow_image apache/airflow:2.2.0-python3.8
 
