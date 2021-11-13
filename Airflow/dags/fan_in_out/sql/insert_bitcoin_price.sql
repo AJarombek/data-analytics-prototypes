@@ -5,5 +5,5 @@
 INSERT INTO prices (
     coin, price, time
 ) VALUES (
-    'bitcoin', {{ params.price }}, {{ params.time }}
+    'bitcoin', {{ti.xcom_pull(task_ids="get_bitcoin_price_task", key="return_value")}}, '{{ts}}'
 );

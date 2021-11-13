@@ -42,11 +42,7 @@ with DAG(
     insert_bitcoin_task = PostgresOperator(
         task_id='insert_bitcoin_task',
         postgres_conn_id='postgres_default',
-        sql='sql/insert_bitcoin_price.sql',
-        parameters={
-            'price': '{{ti.xcom_pull(task_ids="get_bitcoin_price_task", key="return_value")}}',
-            'time': '{{ts}}'
-        }
+        sql='sql/insert_bitcoin_price.sql'
     )
 
     get_ethereum_price_task = PythonOperator(task_id='get_ethereum_price_task', python_callable=get_ethereum_price)
@@ -54,11 +50,7 @@ with DAG(
     insert_ethereum_task = PostgresOperator(
         task_id='insert_ethereum_task',
         postgres_conn_id='postgres_default',
-        sql='fan_in_out/insert_ethereum_price.sql',
-        parameters={
-            'price': '{{ti.xcom_pull(task_ids="get_ethereum_price_task", key="return_value")}}',
-            'time': '{{ts}}'
-        }
+        sql='sql/insert_ethereum_price.sql'
     )
 
     select_prices_task = PostgresOperator(

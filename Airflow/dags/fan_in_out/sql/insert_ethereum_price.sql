@@ -5,5 +5,5 @@
 INSERT INTO prices (
     coin, price, time
 ) VALUES (
-    'ethereum', {{ params.price }}, {{ params.time }}
+    'ethereum', {{ti.xcom_pull(task_ids="get_ethereum_price_task", key="return_value")}}, '{{ts}}'
 );
