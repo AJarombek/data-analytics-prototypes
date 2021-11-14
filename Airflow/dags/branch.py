@@ -4,7 +4,7 @@ Author: Andrew Jarombek
 Date: 11/12/2021
 """
 
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator, BranchPythonOperator
@@ -12,15 +12,27 @@ from airflow.utils.dates import days_ago
 
 
 def branch():
-    pass
+    if datetime.now().weekday() >= 5:
+        return 'weekend'
+    else:
+        return 'weekday'
 
 
 def weekend():
-    pass
+    print(
+        "Schedule:\n"
+        "8 AM - 12 PM: Run & Workout\n"
+        "12 PM - 10 PM: Code & Relax"
+    )
 
 
 def weekday():
-    pass
+    print(
+        "Schedule:\n"
+        "6 AM - 9 AM: Run & Workout\n"
+        "9 AM - 5 PM: Work\n"
+        "5 PM - 10 PM: Code & Relax"
+    )
 
 
 default_args = {
@@ -38,7 +50,7 @@ with DAG(
     schedule_interval="@daily",
     default_view="graph",
     is_paused_upon_creation=False,
-    tags=["sample", "branch"]
+    tags=["sample", "branch", "python"]
 ) as dag:
     branch_task = BranchPythonOperator(task_id='branch', python_callable=branch)
     weekend_task = PythonOperator(task_id='weekend_task', python_callable=weekend)
