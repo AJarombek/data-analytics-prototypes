@@ -4,6 +4,7 @@ Author: Andrew Jarombek
 Date: 11/20/2021
 """
 
+from typing import Dict, Any
 from datetime import timedelta
 
 from airflow import DAG
@@ -71,4 +72,25 @@ with DAG(
             ]
         }
 
+    @task
+    def data_cleaning(data: Dict[str, Any]):
+        # Indoor Track races
+        df = pd.DataFrame(data)
+        cleaned_df = df[df['type'] == 'indoor']
+        return cleaned_df.to_dict(orient='list')
+
+    @task
+    def data_analysis(data: Dict[str, Any]):
+        df = pd.DataFrame(data)
+        goals = df.groupby(['miles']).min()[['goal_time']]
+        mile_goal = goals.loc[1]['goal_time']
+        three_k_goal = goals.loc[1.86]['goal_time']
+        five_k_goal = goals.loc[3.11]['goal_time']
+
+        print(f'Mile Goal Time: {mile_goal}')
+        print(f'3000m Goal Time: {three_k_goal}')
+        print(f'5000m Goal Time: {five_k_goal}')
+
     initial_data = data_creation()
+    cleaned_data = data_cleaning(initial_data)
+    data_analysis(cleaned_data)

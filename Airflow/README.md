@@ -42,3 +42,4 @@ python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().d
 | `pyproject.toml`     | [Poetry](https://python-poetry.org/) dependency management configuration file.          |
 | `dags`               | Directory holding Python DAG files.                                                     |
 | `local-executor`     | Alternative Docker compose file which uses a local executor.                            |
+| `aws`                | Configuration for running Airflow on AWS.                                               |
