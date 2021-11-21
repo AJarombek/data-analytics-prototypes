@@ -13,9 +13,9 @@ from airflow.utils.dates import days_ago
 
 def branch():
     if datetime.now().weekday() >= 5:
-        return 'weekend'
+        return 'weekend_task'
     else:
-        return 'weekday'
+        return 'weekday_task'
 
 
 def weekend():

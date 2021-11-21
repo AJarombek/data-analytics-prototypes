@@ -13,9 +13,9 @@ from airflow.utils.dates import days_ago
 
 def branch():
     if datetime.now().dst() == 0:
-        return 'standard_time'
+        return 'standard_time_task'
     else:
-        return 'daylight_savings'
+        return 'daylight_savings_task'
 
 
 def standard_time():
