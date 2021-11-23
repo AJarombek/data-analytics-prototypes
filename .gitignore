@@ -9,3 +9,4 @@ test.sqlite
 sample_mmap
 __pycache__
 venv
+.terraform

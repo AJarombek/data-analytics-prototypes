@@ -23,7 +23,13 @@ terraform {
   }
 }
 
+locals {
+  name = "sandbox"
+}
+
 data "aws_caller_identity" "current" {}
+
+data "aws_region" "current" {}
 
 data "aws_vpc" "application-vpc" {
   tags = {
@@ -44,7 +50,7 @@ data "aws_subnet" "kubernetes-grandmas-blanket-public-subnet" {
 }
 
 resource "aws_mwaa_environment" "sandbox" {
-  name = "sandbox"
+  name = local.name
   airflow_version = "2.0.2"
 
   source_bucket_arn = aws_s3_bucket.andrew-jarombek-airflow-dags.arn
@@ -57,6 +63,33 @@ resource "aws_mwaa_environment" "sandbox" {
       data.aws_subnet.kubernetes-dotty-public-subnet.id,
       data.aws_subnet.kubernetes-grandmas-blanket-public-subnet.id
     ]
+  }
+
+  logging_configuration {
+    dag_processing_logs {
+      enabled = true
+      log_level = "INFO"
+    }
+
+    scheduler_logs {
+      enabled = true
+      log_level = "INFO"
+    }
+
+    task_logs {
+      enabled = true
+      log_level = "INFO"
+    }
+
+    webserver_logs {
+      enabled = true
+      log_level = "INFO"
+    }
+
+    worker_logs {
+      enabled = true
+      log_level = "INFO"
+    }
   }
 
   tags = {
@@ -100,6 +133,14 @@ resource "aws_s3_bucket_policy" "andrew-jarombek-airflow-dags-policy" {
   })
 }
 
+resource "aws_s3_bucket_object" "dags" {
+  for_each = fileset("../dags/", "*.py")
+  bucket = aws_s3_bucket.andrew-jarombek-airflow-dags.id
+  key = "dags/${each.value}"
+  source = "../dags/${each.value}"
+  etag = filemd5("../dags/${each.value}")
+}
+
 data "aws_iam_policy_document" "airflow-assume-role-policy" {
   statement {
     sid = "mwaa"
@@ -120,7 +161,98 @@ resource "aws_iam_role" "airflow" {
 
 data "aws_iam_policy_document" "airflow-policy" {
   statement {
+    sid = "airflowPublishMetrics"
+    actions = ["airflow:PublishMetrics"]
+    effect = "Allow"
+    resources = [
+      "arn:aws:airflow:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:environment/${local.name}"
+    ]
+  }
 
+  statement {
+    sid = "airflowListBucket"
+    actions = ["s3:ListAllMyBuckets"]
+    effect = "Allow"
+    resources = [
+      aws_s3_bucket.andrew-jarombek-airflow-dags.arn,
+      "${aws_s3_bucket.andrew-jarombek-airflow-dags.arn}/*"
+    ]
+  }
+
+  statement {
+    sid = "airflowS3"
+    actions = [
+      "s3:GetObject*",
+      "s3:GetBucket*",
+      "s3:List*"
+    ]
+    effect = "Allow"
+    resources = [
+      aws_s3_bucket.andrew-jarombek-airflow-dags.arn,
+      "${aws_s3_bucket.andrew-jarombek-airflow-dags.arn}/*"
+    ]
+  }
+
+  statement {
+    sid = "airflowDescribeLogGroups"
+    actions = ["logs:DescribeLogGroups"]
+    effect = "Allow"
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "airflowLogs"
+    actions = [
+      "logs:CreateLogStream",
+      "logs:CreateLogGroup",
+      "logs:PutLogEvents",
+      "logs:GetLogEvents",
+      "logs:GetLogRecord",
+      "logs:GetLogGroupFields",
+      "logs:GetQueryResults",
+      "logs:DescribeLogGroups"
+    ]
+    effect = "Allow"
+    resources = ["arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:airflow-${local.name}*"]
+  }
+
+  statement {
+    sid = "airflowMetricData"
+    actions = ["cloudwatch:PutMetricData"]
+    effect = "Allow"
+    resources = ["*"]
+  }
+
+  statement {
+    sid = "airflowSqs"
+    actions = [
+      "sqs:ChangeMessageVisibility",
+      "sqs:DeleteMessage",
+      "sqs:GetQueueAttributes",
+      "sqs:GetQueueUrl",
+      "sqs:ReceiveMessage",
+      "sqs:SendMessage"
+    ]
+    effect = "Allow"
+    resources = ["arn:aws:sqs:${data.aws_region.current.name}:*:airflow-celery-*"]
+  }
+
+  statement {
+    sid = "airflowKms"
+    actions = [
+      "kms:Decrypt",
+      "kms:DescribeKey",
+      "kms:GenerateDataKey*",
+      "kms:Encrypt"
+    ]
+    effect = "Allow"
+    not_resources = ["arn:aws:kms:*:${data.aws_region.current.name}:key/*"]
+
+    condition {
+      test = "StringLike"
+      variable = "kms:ViaService"
+      values = ["sqs.${data.aws_region.current.name}.amazonaws.com"]
+    }
   }
 }
 
