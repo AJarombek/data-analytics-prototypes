@@ -37,15 +37,15 @@ data "aws_vpc" "application-vpc" {
   }
 }
 
-data "aws_subnet" "kubernetes-dotty-public-subnet" {
+data "aws_subnet" "application-lily-private-subnet" {
   tags = {
-    Name = "kubernetes-dotty-public-subnet"
+    Name = "application-lily-private-subnet"
   }
 }
 
-data "aws_subnet" "kubernetes-grandmas-blanket-public-subnet" {
+data "aws_subnet" "application-teddy-private-subnet" {
   tags = {
-    Name = "kubernetes-grandmas-blanket-public-subnet"
+    Name = "application-teddy-private-subnet"
   }
 }
 
@@ -60,8 +60,8 @@ resource "aws_mwaa_environment" "sandbox" {
   network_configuration {
     security_group_ids = [aws_security_group.airflow.id]
     subnet_ids = [
-      data.aws_subnet.kubernetes-dotty-public-subnet.id,
-      data.aws_subnet.kubernetes-grandmas-blanket-public-subnet.id
+      data.aws_subnet.application-lily-private-subnet.id,
+      data.aws_subnet.application-teddy-private-subnet.id
     ]
   }
 
@@ -148,7 +148,7 @@ data "aws_iam_policy_document" "airflow-assume-role-policy" {
 
     principals {
       identifiers = ["airflow-env.amazonaws.com", "airflow.amazonaws.com"]
-      type = "service"
+      type = "Service"
     }
   }
 }

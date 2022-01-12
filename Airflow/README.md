@@ -7,6 +7,8 @@ Code samples for working with Airflow.
 **Initial Setup**
 
 ```bash
+cd <executor_type>-executor
+
 # Start the server
 docker system prune
 docker-compose up
@@ -35,11 +37,12 @@ python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().d
 
 ### Files
 
-| Filename             | Description                                                                             |
-|----------------------|-----------------------------------------------------------------------------------------|
-| `docker-compose.yml` | Docker compose file for configuring an Airflow server.                                  |
-| `poetry.lock`        | Lock file containing Python dependencies installed by Poetry.                           |
-| `pyproject.toml`     | [Poetry](https://python-poetry.org/) dependency management configuration file.          |
-| `dags`               | Directory holding Python DAG files.                                                     |
-| `local-executor`     | Alternative Docker compose file which uses a local executor.                            |
-| `aws`                | Configuration for running Airflow on AWS.                                               |
+| Filename              | Description                                                                             |
+|-----------------------|-----------------------------------------------------------------------------------------|
+| `poetry.lock`         | Lock file containing Python dependencies installed by Poetry.                           |
+| `pyproject.toml`      | [Poetry](https://python-poetry.org/) dependency management configuration file.          |
+| `celery-executor`     | Airflow Docker compose file which uses a celery executor.                               |
+| `dags`                | Directory holding Python DAG files.                                                     |
+| `local-executor`      | Airflow Docker compose file which uses a local executor.                                |
+| `sequential-executor` | Airflow Docker compose file which uses a sequential executor.                           |
+| `aws`                 | Configuration for running Airflow on AWS.                                               |

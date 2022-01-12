@@ -96,7 +96,7 @@ services:
         condition: service_completed_successfully
     volumes:
       - logs:/opt/airflow/logs
-      - ./dags:/opt/airflow/dags
+      - ../dags:/opt/airflow/dags
     networks:
       - airflow-net
     environment: *airflow_environment
@@ -121,7 +121,7 @@ services:
       - airflow-net
     volumes:
       - logs:/opt/airflow/logs
-      - ./dags:/opt/airflow/dags
+      - ../dags:/opt/airflow/dags
     depends_on:
       redis:
         condition: service_healthy
@@ -144,7 +144,7 @@ services:
       - airflow-net
     volumes:
       - logs:/opt/airflow/logs
-      - ./dags:/opt/airflow/dags
+      - ../dags:/opt/airflow/dags
     depends_on:
       redis:
         condition: service_healthy

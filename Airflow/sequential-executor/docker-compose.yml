@@ -1,0 +1,36 @@
+# Docker Compose configuration for Apache Airflow using a sequential executor.
+# Author: Andrew Jarombek
+# Date: 10/28/2021
+
+version: '3.8'
+
+x-environment: &airflow_environment
+  - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
+  - AIRFLOW__CORE__LOAD_EXAMPLES=False
+  - AIRFLOW__CORE__STORE_DAG_CODE=True
+  - AIRFLOW__CORE__STORE_SERIALIZED_DAGS=True
+  - AIRFLOW__WEBSERVER__EXPOSE_CONFIG=True
+  - _PIP_ADDITIONAL_REQUIREMENTS=apache-airflow-providers-postgres==2.3.0
+
+services:
+  airflow:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    environment: *airflow_environment
+    ports:
+      - "8080:8080"
+    volumes:
+      - logs:/opt/airflow/logs
+      - ../dags:/opt/airflow/dags
+    networks:
+      - airflow-net
+    entrypoint: /bin/bash
+    command: -c 'airflow webserver & airflow scheduler'
+
+volumes:
+  logs:
+
+networks:
+  airflow-net:
+    driver: bridge
