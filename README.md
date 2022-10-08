@@ -1,5 +1,7 @@
 # data-analytics-prototypes
 
+![Maintained Label](https://img.shields.io/badge/Maintained-Partially-yellow?style=for-the-badge)
+
 ### Overview
 
 Prototypes / Code Samples for Data Analytics concepts and code libraries.  The following languages are explored in this 
@@ -25,3 +27,14 @@ repository:
 | `LLVM`            | Code samples / prototypes written in LLVM.                                                               |
 | `Python`          | Code samples / prototypes written in Python.                                                             |
 | `R`               | Code samples / prototypes written in R.                                                                  |
+| `Spark`           | Code samples for Spark, which are written in Python, Scala, SQL, and more.                               |
+| `.plzconfig`      | Please Build configuration file for the repository.                                                      |
+| `BUILD`           | Please Build rules for the top level directory of the repository.                                        |
+
+### Version History
+
+**[v1.0.0](https://github.com/AJarombek/data-analytics-prototypes/tree/v1.0.0) - Initial Version**
+
+> Release Date: Jan 11th, 2022
+
+* Initial data analytics code samples, mostly for Numpy, Pandas, and Airflow.

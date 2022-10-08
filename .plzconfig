@@ -1,0 +1,6 @@
+; Please config file
+; Author: Andrew Jarombek
+; Date: 10/8/2022
+
+[please]
+version = 16.22.1
