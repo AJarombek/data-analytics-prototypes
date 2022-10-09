@@ -10,3 +10,8 @@ sample_mmap
 __pycache__
 venv
 .terraform
+Spark/data/*.json
+**/scala/.bsp/
+**/scala/project/target/
+**/scala/project/project/
+**/scala/target/
