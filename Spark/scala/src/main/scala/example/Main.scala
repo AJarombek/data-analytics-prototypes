@@ -19,14 +19,14 @@ object Main {
       .getOrCreate()
 
     spark.read
-      .format("json")
-      .option("inferSchema", "true")
-      .load(filename)
+      .option("multiline","true")
+      .json(filename)
   }
 
   def main(args: Array[String]): Unit = {
     val filename = args(0)
     val df = createDF(filename)
+    df.printSchema()
     df.show()
   }
 }
