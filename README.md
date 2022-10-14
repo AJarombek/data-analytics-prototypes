@@ -17,6 +17,29 @@ repository:
 
 > R - R is the best option if you need a domain-specific language for data analytics.
 
+### Commands
+
+**Local Please Build Commands**
+
+```bash
+plz build //Python/numpy:numpy_first_steps -vvv
+cat plz-out/gen/Python/numpy/numpy_first_steps.log
+
+plz build //Python/numpy:numpy_next_steps -vvv
+cat plz-out/gen/Python/numpy/numpy_next_steps.log
+
+plz build //Python/numpy:numpy_advanced -vvv
+cat plz-out/gen/Python/numpy/numpy_advanced.log
+```
+
+**Install Please Build**
+
+```bash
+curl https://get.please.build | bash
+source ~/.profile
+plz --version
+```
+
 ### Directories
 
 | Directory Name    | Description                                                                                              |

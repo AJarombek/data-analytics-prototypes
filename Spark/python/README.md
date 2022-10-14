@@ -24,3 +24,9 @@ poetry install
 # Update dependencies specified in the pyproject.toml file.
 poetry update
 ```
+
+**Run Tests Locally**
+
+```bash
+pytest
+```

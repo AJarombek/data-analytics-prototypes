@@ -4,3 +4,6 @@
 
 [please]
 version = 16.22.1
+
+[python]
+moduledir = Spark/python/

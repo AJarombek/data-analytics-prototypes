@@ -16,3 +16,4 @@ Spark/data/*.json
 **/scala/project/project/
 **/scala/target/
 .pytest_cache
+plz-out

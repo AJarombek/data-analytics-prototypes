@@ -9,7 +9,9 @@ filegroup(
 
 genrule(
     name = "generate_data_files",
-    cmd = ["jsonnet exercises.jsonnet > exercises.json"],
+    cmd = ["jsonnet Spark/data/exercises.jsonnet > exercises.json"],
+    srcs = [":data_files"],
     labels = ["data_files"],
-    outs = [glob(["*.json"])]
+    outs = ["exercises.json"],
+    visibility=["PUBLIC"]
 )
