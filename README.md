@@ -30,6 +30,9 @@ cat plz-out/gen/Python/numpy/numpy_next_steps.log
 
 plz build //Python/numpy:numpy_advanced -vvv
 cat plz-out/gen/Python/numpy/numpy_advanced.log
+
+plz build //Python/numpy:numba_basics -vvv
+cat plz-out/gen/Python/numpy/numba_basics.log
 ```
 
 **Install Please Build**

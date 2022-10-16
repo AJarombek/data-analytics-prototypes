@@ -1,0 +1,31 @@
+# GitHub Action for running numpy code samples written in Python
+# Author: Andrew Jarombek
+# Date: 10/15/2022
+
+name: Numpy
+
+on:
+  push:
+    branches: ["master", "feature/*"]
+  pull_request:
+    branches: ["master"]
+
+  schedule:
+    - cron: "0 5 * * 1,5"
+
+  workflow_dispatch:
+
+jobs:
+  go_tests:
+    runs-on: ubuntu-latest
+    container: ajarombek/data-analytics-prototypes-python:latest
+    steps:
+      - run: echo "Job running on a ${{ runner.os }} server"
+
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - run: echo "Checked out branch '${{ github.ref }}' of the ${{ github.repository }} repository"
+
+      - name: Run Numpy Basics Code Sample
+        run: plz build //Python/... -i numpy -vvv
