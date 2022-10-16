@@ -43,10 +43,22 @@ source ~/.profile
 plz --version
 ```
 
+**Create Python Docker Image**
+
+```bash
+docker login --username=ajarombek
+docker image build -t data-analytics-prototypes-python:latest ./Python
+
+# Push image to DockerHub with tag 'latest'
+docker image tag data-analytics-prototypes-python:latest ajarombek/data-analytics-prototypes-python:latest
+docker push ajarombek/data-analytics-prototypes-python:latest
+```
+
 ### Directories
 
 | Directory Name    | Description                                                                                              |
 |-------------------|----------------------------------------------------------------------------------------------------------|
+| `.github`         | GitHub Actions for CI/CD pipelines.                                                                      |
 | `Airflow`         | Code samples for Airflow, which contains DAG files written in Python but otherwise is language agnostic. |
 | `C`               | Code samples / prototypes written in C.                                                                  |
 | `Fortran`         | Code samples / prototypes written in Fortran.                                                            |
