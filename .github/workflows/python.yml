@@ -1,0 +1,81 @@
+# GitHub Action for running Python code samples, including numpy, pandas, and matplotlib.
+# Author: Andrew Jarombek
+# Date: 10/15/2022
+
+name: Python
+
+on:
+  push:
+    branches: ["master", "feature/*"]
+  pull_request:
+    branches: ["master"]
+
+  schedule:
+    - cron: "0 5 * * 1,5"
+
+  workflow_dispatch:
+
+jobs:
+  numpy:
+    runs-on: ubuntu-latest
+    container: ajarombek/data-analytics-prototypes-python:latest
+    steps:
+      - run: echo "Job running on a ${{ runner.os }} server"
+
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - run: echo "Checked out branch '${{ github.ref }}' of the ${{ github.repository }} repository"
+
+      - name: Run Numpy Basics Code Sample
+        run: plz build //Python/... -i numpy -vvv
+
+      - name: Numpy Code Sample Logs
+        run: >
+          LOG_DIR=plz-out/gen/Python/numpy && 
+          cat $LOG_DIR/numpy_first_steps.log && 
+          cat $LOG_DIR/numpy_next_steps.log && 
+          cat $LOG_DIR/numpy_advanced.log && 
+          cat $LOG_DIR/numba_basics.log
+
+  matplotlib:
+    runs-on: ubuntu-latest
+    container: ajarombek/data-analytics-prototypes-python:latest
+    steps:
+      - run: echo "Job running on a ${{ runner.os }} server"
+
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - run: echo "Checked out branch '${{ github.ref }}' of the ${{ github.repository }} repository"
+
+      - name: Run Numpy Basics Code Sample
+        run: plz build //Python/... -i matplotlib -vvv
+
+      - name: Numpy Code Sample Logs
+        run: >
+          LOG_DIR=plz-out/gen/Python/matplotlib && 
+          cat $LOG_DIR/matplotlib-first-steps.log
+
+  pandas:
+    runs-on: ubuntu-latest
+    container: ajarombek/data-analytics-prototypes-python:latest
+    steps:
+      - run: echo "Job running on a ${{ runner.os }} server"
+
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - run: echo "Checked out branch '${{ github.ref }}' of the ${{ github.repository }} repository"
+
+      - name: Run Numpy Basics Code Sample
+        run: plz build //Python/... -i pandas -vvv
+
+      - name: Numpy Code Sample Logs
+        run: >
+          LOG_DIR=plz-out/gen/Python/pandas && 
+          cat $LOG_DIR/pandas-first-steps.log && 
+          cat $LOG_DIR/pandas-group-by.log && 
+          cat $LOG_DIR/pandas-next-steps.log && 
+          cat $LOG_DIR/pandas-sqlite.log && 
+          cat $LOG_DIR/pandas-time-series.log

@@ -13,6 +13,6 @@ RUN curl https://get.please.build > please.sh && \
 
 ENV PATH="${PATH}:/root/.please/bin"
 
-RUN pip3 install numpy numba pandas matplotlib seaborn
+RUN pip3 install numpy numba pandas matplotlib seaborn sqlalchemy
 
 STOPSIGNAL SIGTERM

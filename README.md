@@ -22,6 +22,7 @@ repository:
 **Local Please Build Commands**
 
 ```bash
+# Python/numpy
 plz build //Python/numpy:numpy_first_steps -vvv
 cat plz-out/gen/Python/numpy/numpy_first_steps.log
 
@@ -33,6 +34,12 @@ cat plz-out/gen/Python/numpy/numpy_advanced.log
 
 plz build //Python/numpy:numba_basics -vvv
 cat plz-out/gen/Python/numpy/numba_basics.log
+
+# Python/matplotlib
+plz build //Python/matplotlib:matplotlib_first_steps -vvv
+
+# Python/pandas
+ plz build //Python/... -i pandas -vvv
 ```
 
 **Install Please Build**
