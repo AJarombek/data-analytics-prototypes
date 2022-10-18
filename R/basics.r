@@ -14,7 +14,7 @@ class(name)
 age <- 25
 class(age)
 
-writing_r = TRUE
+writing_r <- TRUE
 class(writing_r)
 
 # Create a vector
@@ -51,14 +51,14 @@ range
 
 # Creating matrices with R
 # Fill the columns with values first.
-grid = matrix(1:6, byrow=FALSE, nrow=2)
+grid <- matrix(1:6, byrow=FALSE, nrow=2)
 grid
 
 # Get the dimension of the matrix (2 3)
 dim(grid)
 
 # Fill the rows with values first.
-grid = matrix(1:6, byrow=TRUE, nrow=3)
+grid <- matrix(1:6, byrow=TRUE, nrow=3)
 grid
 
 # Add a new column to the grid.  This does not mutate the original matrix, 
@@ -93,7 +93,7 @@ print(distance_col)
 print(is.vector(distance_col))
 
 # Another way to create a data frame.  Represents lines coded at work this week (so far).
-lines_coded = data.frame(
+lines_coded <- data.frame(
   language = c('Groovy', 'Python', 'Bash', 'Gherkin', 'TOML'),
   lines = c(183, 147, 21, 15, 14)
 )

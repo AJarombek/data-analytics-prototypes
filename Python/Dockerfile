@@ -6,7 +6,7 @@ FROM python:3.8
 
 LABEL maintainer="andrew@jarombek.com" \
       version="1.0.0" \
-      description="Dockerfile for Go programming on Debian"
+      description="Dockerfile for Python programming on Debian"
 
 RUN curl https://get.please.build > please.sh && \
     bash ./please.sh

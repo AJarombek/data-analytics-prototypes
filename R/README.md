@@ -5,6 +5,8 @@ numpy and pandas.
 
 ### Files
 
-| Filename          | Description                                                                   |
-|-------------------|-------------------------------------------------------------------------------|
-| `basics.r`        | Learning the basic concepts/syntax of R.                                      |
+| Filename      | Description                                                 |
+|---------------|-------------------------------------------------------------|
+| `BUILD`       | Please build rules for R programming language code samples. |
+| `Dockerfile`  | Dockerfile for an image containing R and Please Build.      |
+| `basics.r`    | Learning the basic concepts/syntax of R.                    |

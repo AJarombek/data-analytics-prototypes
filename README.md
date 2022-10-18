@@ -39,7 +39,11 @@ cat plz-out/gen/Python/numpy/numba_basics.log
 plz build //Python/matplotlib:matplotlib_first_steps -vvv
 
 # Python/pandas
- plz build //Python/... -i pandas -vvv
+plz build //Python/... -i pandas -vvv
+ 
+# R
+plz build //R:r_version -vvv
+plz build //R:r_basics -vvv
 ```
 
 **Install Please Build**
@@ -66,6 +70,7 @@ docker push ajarombek/data-analytics-prototypes-python:latest
 | Directory Name    | Description                                                                                              |
 |-------------------|----------------------------------------------------------------------------------------------------------|
 | `.github`         | GitHub Actions for CI/CD pipelines.                                                                      |
+| `.run`            | Run configurations to use in PyCharm/IntelliJ IDEs.                                                      |
 | `Airflow`         | Code samples for Airflow, which contains DAG files written in Python but otherwise is language agnostic. |
 | `C`               | Code samples / prototypes written in C.                                                                  |
 | `Fortran`         | Code samples / prototypes written in Fortran.                                                            |
