@@ -65,6 +65,17 @@ docker image tag data-analytics-prototypes-python:latest ajarombek/data-analytic
 docker push ajarombek/data-analytics-prototypes-python:latest
 ```
 
+**Create R Docker Image**
+
+```bash
+docker login --username=ajarombek
+docker image build -t data-analytics-prototypes-r:latest ./R
+
+# Push image to DockerHub with tag 'latest'
+docker image tag data-analytics-prototypes-r:latest ajarombek/data-analytics-prototypes-r:latest
+docker push ajarombek/data-analytics-prototypes-r:latest
+```
+
 ### Directories
 
 | Directory Name    | Description                                                                                              |
