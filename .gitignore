@@ -3,7 +3,7 @@
 *.npy
 fortran/build
 fortran/cmake-build-debug
-c/build
+c/build/
 c/cmake-build-debug
 test.sqlite
 sample_mmap

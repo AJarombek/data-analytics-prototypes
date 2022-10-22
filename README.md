@@ -54,6 +54,17 @@ source ~/.profile
 plz --version
 ```
 
+**Create LLVM Docker Image**
+
+```bash
+docker login --username=ajarombek
+docker image build -t data-analytics-prototypes-llvm:latest ./LLVM
+
+# Push image to DockerHub with tag 'latest'
+docker image tag data-analytics-prototypes-llvm:latest ajarombek/data-analytics-prototypes-llvm:latest
+docker push ajarombek/data-analytics-prototypes-llvm:latest
+```
+
 **Create Python Docker Image**
 
 ```bash

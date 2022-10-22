@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-# Install dependencies for matplotlib code samples
+# Run the arithmetic.ll LLVM code and print the result
 # Author: Andrew Jarombek
-# Date: 10/16/2022
+# Date: 10/18/2022
 
 lli "$1"/arithmetic.ll
 printf "2 + 5 = %s \n" $?

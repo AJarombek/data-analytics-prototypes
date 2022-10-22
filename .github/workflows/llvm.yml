@@ -1,8 +1,8 @@
-# GitHub Action for running R code samples.
+# GitHub Action for running LLVM code samples.
 # Author: Andrew Jarombek
-# Date: 10/17/2022
+# Date: 10/20/2022
 
-name: R
+name: LLVM
 
 on:
   push:
@@ -16,9 +16,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  numpy:
+  llvm:
     runs-on: ubuntu-latest
-    container: ajarombek/data-analytics-prototypes-r:latest
+    container: ajarombek/data-analytics-prototypes-llvm:latest
     steps:
       - run: echo "Job running on a ${{ runner.os }} server"
 
@@ -27,11 +27,13 @@ jobs:
 
       - run: echo "Checked out branch '${{ github.ref }}' of the ${{ github.repository }} repository"
 
-      - name: Run Numpy Basics Code Sample
-        run: plz build //... -i r -vvv
+      - name: Run LLVM Basics Code Sample
+        run: plz build //... -i llvm -vvv
 
-      - name: Numpy Code Sample Logs
+      - name: LLVM Code Sample Logs
         run: >
-          LOG_DIR=plz-out/gen/R && 
-          cat $LOG_DIR/r_basics.log && 
-          cat $LOG_DIR/r.log
+          LOG_DIR=plz-out/gen/LLVM && 
+          cat $LOG_DIR/llvm.log && 
+          cat $LOG_DIR/llvm_hello_world.log && 
+          cat $LOG_DIR/llvm_basics.log && 
+          cat $LOG_DIR/llvm_arithmetic.log
