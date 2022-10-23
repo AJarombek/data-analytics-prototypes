@@ -1,8 +1,8 @@
-# GitHub Action for running C code samples.
+# GitHub Action for running Fortran code samples.
 # Author: Andrew Jarombek
-# Date: 10/22/2022
+# Date: 10/23/2022
 
-name: C
+name: Fortran
 
 on:
   push:
@@ -16,9 +16,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  c:
+  fortran:
     runs-on: ubuntu-latest
-    container: ajarombek/debian-system-programming:latest
+    container: ajarombek/data-analytics-prototypes-fortran:latest
     steps:
       - run: echo "Job running on a ${{ runner.os }} server"
 
@@ -27,5 +27,11 @@ jobs:
 
       - run: echo "Checked out branch '${{ github.ref }}' of the ${{ github.repository }} repository"
 
-      - name: Build and Run C Code
-        run: cd C && cmake . && cmake --build . && ./matrices
+      - name: Build and Run Fortran Code
+        run: >
+          cd Fortran && 
+          cmake . && 
+          cmake --build . && 
+          ./hello_world && 
+          ./basics && 
+          ./matrices

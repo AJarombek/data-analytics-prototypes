@@ -6,7 +6,7 @@ program basics
 
     ! Fortran a statically typed language that uses manifest typing.  This means that types of variables must
     ! be declared before the variable is used.  This is different than other languages such as the dynamically typed
-    ! JavaScript/Python which allow variables to be declared without an explitly written type (the types are inferred).
+    ! JavaScript/Python which allow variables to be declared without an explicitly written type (the types are inferred).
     ! Fortran also has a legacy 'implicit typing' feature where types of variables can be inferred by the first letter
     ! of a variable name.  This feature is strongly discouraged nowadays.
     implicit none

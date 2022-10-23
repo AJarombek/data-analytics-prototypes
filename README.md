@@ -54,6 +54,17 @@ source ~/.profile
 plz --version
 ```
 
+**Create Fortran Docker Image**
+
+```bash
+docker login --username=ajarombek
+docker image build -t data-analytics-prototypes-fortran:latest ./Fortran
+
+# Push image to DockerHub with tag 'latest'
+docker image tag data-analytics-prototypes-fortran:latest ajarombek/data-analytics-prototypes-fortran:latest
+docker push ajarombek/data-analytics-prototypes-fortran:latest
+```
+
 **Create LLVM Docker Image**
 
 ```bash
