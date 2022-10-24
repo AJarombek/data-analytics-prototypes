@@ -12,6 +12,16 @@ import org.scalatest.funsuite._
 
 class MainSpec extends AnyFunSuite {
   test("dataframe count") {
-    assert(Main.createDF("exercises.json").count() > 0)
+    assert(Main.createDF("../data/exercises.json").count() > 0)
+  }
+
+  test("long run data") {
+    val df = Main.createDF("../data/exercises.json")
+    val long_run_df = Main.longRuns(df)
+    assert(long_run_df.count() == 2)
+
+    for (row <- long_run_df.collect()) {
+      assert(row.getAs[Double]("miles") >= 10)
+    }
   }
 }

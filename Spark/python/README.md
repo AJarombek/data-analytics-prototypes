@@ -30,3 +30,9 @@ poetry update
 ```bash
 pytest
 ```
+
+**Run Black Formatting**
+
+```bash
+black .
+```

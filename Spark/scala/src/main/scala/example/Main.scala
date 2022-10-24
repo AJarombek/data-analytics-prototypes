@@ -1,6 +1,7 @@
 package example
 
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
+import org.apache.spark.sql.functions._
 
 /**
  * Scala code using Spark.
@@ -23,10 +24,22 @@ object Main {
       .json(filename)
   }
 
+  def longRuns(data: DataFrame): DataFrame = {
+    data
+      .where(col("miles") >= 10)
+      .where(col("type") === "run")
+      .select("date", "location", "miles")
+  }
+
   def main(args: Array[String]): Unit = {
     val filename = args(0)
     val df = createDF(filename)
+
+    println("All Data:")
     df.printSchema()
     df.show()
+
+    println("Long Runs:")
+    longRuns(df).show()
   }
 }

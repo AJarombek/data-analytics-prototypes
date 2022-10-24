@@ -27,10 +27,10 @@ jobs:
 
       - run: echo "Checked out branch '${{ github.ref }}' of the ${{ github.repository }} repository"
 
-      - name: Run Numpy Basics Code Sample
+      - name: Run R Code Samples
         run: plz build //... -i r -vvv
 
-      - name: Numpy Code Sample Logs
+      - name: R Code Logs
         run: >
           LOG_DIR=plz-out/gen/R && 
           cat $LOG_DIR/r_basics.log && 
