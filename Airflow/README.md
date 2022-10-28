@@ -37,12 +37,13 @@ python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().d
 
 ### Files
 
-| Filename              | Description                                                                             |
-|-----------------------|-----------------------------------------------------------------------------------------|
-| `poetry.lock`         | Lock file containing Python dependencies installed by Poetry.                           |
-| `pyproject.toml`      | [Poetry](https://python-poetry.org/) dependency management configuration file.          |
-| `celery-executor`     | Airflow Docker compose file which uses a celery executor.                               |
-| `dags`                | Directory holding Python DAG files.                                                     |
-| `local-executor`      | Airflow Docker compose file which uses a local executor.                                |
-| `sequential-executor` | Airflow Docker compose file which uses a sequential executor.                           |
-| `aws`                 | Configuration for running Airflow on AWS.                                               |
+| Filename              | Description                                                                    |
+|-----------------------|--------------------------------------------------------------------------------|
+| `poetry.lock`         | Lock file containing Python dependencies installed by Poetry.                  |
+| `pyproject.toml`      | [Poetry](https://python-poetry.org/) dependency management configuration file. |
+| `aws`                 | Configuration for running Airflow on AWS.                                      |
+| `celery-executor`     | Airflow Docker compose file which uses a celery executor.                      |
+| `dags`                | Directory holding Python DAG files.                                            |
+| `local-executor`      | Airflow Docker compose file which uses a local executor.                       |
+| `sequential-executor` | Airflow Docker compose file which uses a sequential executor.                  |
+| `tests`               | Directory holding Airflow DAG unit tests.                                      |
