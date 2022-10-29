@@ -200,3 +200,136 @@ def test_fan_in_out_task_dependencies() -> None:
         expected_upstream_tasks=['insert_bitcoin_task', 'insert_ethereum_task'],
         expected_downstream_tasks=[]
     )
+
+
+def test_hello_world_task_dependencies() -> None:
+    dag = get_dag('hello_world')
+
+    check_dag_dependencies(
+        dag=dag,
+        task_id='bash_task',
+        expected_upstream_tasks=[],
+        expected_downstream_tasks=['python_task']
+    )
+
+    check_dag_dependencies(
+        dag=dag,
+        task_id='python_task',
+        expected_upstream_tasks=['bash_task'],
+        expected_downstream_tasks=[]
+    )
+
+
+def test_scheduled_cron_task_dependencies() -> None:
+    dag = get_dag('scheduled_cron')
+
+    check_dag_dependencies(
+        dag=dag,
+        task_id='python_task',
+        expected_upstream_tasks=[],
+        expected_downstream_tasks=[]
+    )
+
+
+def test_scheduled_frequency_task_dependencies() -> None:
+    dag = get_dag('scheduled_frequency')
+
+    check_dag_dependencies(
+        dag=dag,
+        task_id='python_task',
+        expected_upstream_tasks=[],
+        expected_downstream_tasks=[]
+    )
+
+
+def test_scheduled_preset_task_dependencies() -> None:
+    dag = get_dag('scheduled_preset')
+
+    check_dag_dependencies(
+        dag=dag,
+        task_id='python_task',
+        expected_upstream_tasks=[],
+        expected_downstream_tasks=[]
+    )
+
+
+def test_taskflow_task_dependencies() -> None:
+    dag = get_dag('taskflow')
+
+    check_dag_dependencies(
+        dag=dag,
+        task_id='data_creation',
+        expected_upstream_tasks=[],
+        expected_downstream_tasks=['data_cleaning']
+    )
+
+    check_dag_dependencies(
+        dag=dag,
+        task_id='data_cleaning',
+        expected_upstream_tasks=['data_creation'],
+        expected_downstream_tasks=['data_analysis']
+    )
+
+    check_dag_dependencies(
+        dag=dag,
+        task_id='data_analysis',
+        expected_upstream_tasks=['data_cleaning'],
+        expected_downstream_tasks=[]
+    )
+
+
+def test_trigger_rule_none_failed_task_dependencies() -> None:
+    dag = get_dag('trigger_rule_none_failed')
+
+    check_dag_dependencies(
+        dag=dag,
+        task_id='branch',
+        expected_upstream_tasks=[],
+        expected_downstream_tasks=['standard_time_task', 'daylight_savings_task']
+    )
+
+    check_dag_dependencies(
+        dag=dag,
+        task_id='standard_time_task',
+        expected_upstream_tasks=['branch'],
+        expected_downstream_tasks=['always_task']
+    )
+
+    check_dag_dependencies(
+        dag=dag,
+        task_id='daylight_savings_task',
+        expected_upstream_tasks=['branch'],
+        expected_downstream_tasks=['always_task']
+    )
+
+    check_dag_dependencies(
+        dag=dag,
+        task_id='always_task',
+        expected_upstream_tasks=['standard_time_task', 'daylight_savings_task'],
+        expected_downstream_tasks=[]
+    )
+
+
+def test_xcom_task_dependencies() -> None:
+    dag = get_dag('xcom')
+
+    check_dag_dependencies(
+        dag=dag,
+        task_id='data_creation_task',
+        expected_upstream_tasks=[],
+        expected_downstream_tasks=['data_cleaning_task']
+    )
+
+    check_dag_dependencies(
+        dag=dag,
+        task_id='data_cleaning_task',
+        expected_upstream_tasks=['data_creation_task'],
+        expected_downstream_tasks=['data_analysis_task']
+    )
+
+    check_dag_dependencies(
+        dag=dag,
+        task_id='data_analysis_task',
+        expected_upstream_tasks=['data_cleaning_task'],
+        expected_downstream_tasks=[]
+    )
