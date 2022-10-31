@@ -38,6 +38,16 @@ def long_runs(data: DataFrame) -> DataFrame:
     )
 
 
+def order_by_mileage(data: DataFrame, desc: bool = True) -> DataFrame:
+    """
+    Order a dataframe of exercises by their mileage.
+    :param data: A dataframe containing exercise data.
+    :param desc: Whether the exercises should be ordered in descending order or not.
+    :return: Ordered data in a dataframe.
+    """
+    return data.orderBy(F.desc("miles") if desc else F.col("miles"))
+
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print("No JSON File Specified")
@@ -49,5 +59,9 @@ if __name__ == '__main__':
     print("All Data:")
     print(df.show())
 
+    long_run_df = long_runs(df)
     print("Long Runs:")
-    print(long_runs(df).show())
+    print(long_run_df.show())
+
+    print("Ordered Long Runs:")
+    print(order_by_mileage(long_run_df).show())

@@ -1,5 +1,6 @@
 package example
 
+import org.apache.spark.sql.functions.col
 import org.scalatest.funsuite._
 
 /**
@@ -22,6 +23,38 @@ class MainSpec extends AnyFunSuite {
 
     for (row <- long_run_df.collect()) {
       assert(row.getAs[Double]("miles") >= 10)
+    }
+  }
+
+  test("order by mileage ascending") {
+    val df = Main.createDF("../data/exercises.json")
+      .filter(col("type") === "kayak")
+
+    val orderedDf = Main.orderByMileage(df, descending = false)
+    assert(orderedDf.count() > 0)
+
+    var prev: Double = 0
+
+    for (row <- orderedDf.collect()) {
+      val miles = row.getAs[Double]("miles")
+      assert(prev <= miles)
+      prev = miles
+    }
+  }
+
+  test("order by mileage descending") {
+    val df = Main.createDF("../data/exercises.json")
+      .filter(col("type") === "kayak")
+
+    val orderedDf = Main.orderByMileage(df, descending = true)
+    assert(orderedDf.count() > 0)
+
+    var prev = Double.MaxValue
+
+    for (row <- orderedDf.collect()) {
+      val miles = row.getAs[Double]("miles")
+      assert(prev >= miles)
+      prev = miles
     }
   }
 }

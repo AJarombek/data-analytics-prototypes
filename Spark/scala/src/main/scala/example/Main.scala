@@ -31,6 +31,10 @@ object Main {
       .select("date", "location", "miles")
   }
 
+  def orderByMileage(data: DataFrame, descending: Boolean): DataFrame = {
+    data.orderBy(if (descending) desc("miles") else col("miles"))
+  }
+
   def main(args: Array[String]): Unit = {
     val filename = args(0)
     val df = createDF(filename)
@@ -40,6 +44,10 @@ object Main {
     df.show()
 
     println("Long Runs:")
-    longRuns(df).show()
+    val longRunDf = longRuns(df)
+    longRunDf.show()
+
+    println("Ordered Long Runs:")
+    orderByMileage(longRunDf, descending = true).show()
   }
 }
