@@ -86,6 +86,11 @@ def create_exercise_type_table() -> DataFrame:
 
 
 def create_languages_table() -> DataFrame:
+    """
+    Create a dataframe containing programming language information & statistics.  The dataframe is
+    created using a data set and a string schema.
+    :return:  A dataframe containing programming language statistics.
+    """
     spark = spark_session()
     schema = "language STRING, first_year_coded INT, total_lines INT, lines ARRAY<INT>"
 

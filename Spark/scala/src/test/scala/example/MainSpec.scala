@@ -57,4 +57,14 @@ class MainSpec extends AnyFunSuite {
       prev = miles
     }
   }
+
+  test("create exercise type table") {
+    val df = Main.createExerciseTypeTable()
+    assert(df.count() == 9)
+  }
+
+  test("create languages table") {
+    val df = Main.createLanguagesTable()
+    assert(df.count() == 5)
+  }
 }
