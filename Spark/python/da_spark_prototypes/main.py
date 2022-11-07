@@ -10,6 +10,8 @@ from pyspark.sql import SparkSession, DataFrame
 import pyspark.sql.functions as F
 import pyspark.sql.types as T
 
+from da_spark_prototypes.exercise_table import Exercise
+
 
 def spark_session() -> SparkSession:
     """
@@ -54,6 +56,21 @@ def order_by_mileage(data: DataFrame, desc: bool = True) -> DataFrame:
     :return: Ordered data in a dataframe.
     """
     return data.orderBy(F.desc("miles") if desc else F.col("miles"))
+
+
+def walk_intensity(data: DataFrame) -> DataFrame:
+    """
+    Create a dataframe containing walking exercises that are over an hour.
+    Uses withColumnRenamed() to rename a column.
+    :param data: A dataframe containing exercise data.
+    :return: Long walk exercises in a dataframe
+    """
+    return (
+        data.withColumnRenamed(Exercise.hours, "intensity")
+        .where(F.col(Exercise.type) == "walk")
+        .select(Exercise.date, Exercise.location, "intensity")
+        .where(F.col("intensity") > 0)
+    )
 
 
 def create_exercise_type_table() -> DataFrame:
@@ -122,6 +139,9 @@ if __name__ == '__main__':
 
     print("Ordered Long Runs:")
     print(order_by_mileage(long_run_df).show())
+
+    print("Long Walk Intensity:")
+    print(walk_intensity(df).show())
 
     print("Exercise Types:")
     print(create_exercise_type_table().show())

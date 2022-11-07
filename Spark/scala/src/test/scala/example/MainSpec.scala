@@ -58,6 +58,17 @@ class MainSpec extends AnyFunSuite {
     }
   }
 
+  test("walking intensity data") {
+    val df = Main.createDF("../data/exercises.json")
+    val walkDf = Main.walkIntensity(df)
+    assert(walkDf.count() == 5)
+
+    for (row <- walkDf.collect()) {
+      val intensity = row.getAs[Long]("intensity")
+      assert(intensity >= 1)
+    }
+  }
+
   test("create exercise type table") {
     val df = Main.createExerciseTypeTable()
     assert(df.count() == 9)

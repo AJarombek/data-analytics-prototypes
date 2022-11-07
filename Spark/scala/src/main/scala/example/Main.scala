@@ -1,5 +1,6 @@
 package example
 
+import example.Main.sparkSession
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
@@ -58,6 +59,28 @@ object Main {
     data.orderBy(if (descending) desc("miles") else col("miles"))
   }
 
+  /**
+   * Create a dataframe containing walking exercises that are over an hour.
+   *  Uses withColumnRenamed() to rename a column.
+   * @param data A dataframe containing exercise data.
+   * @return Long walk exercises in a dataframe.
+   */
+  def walkIntensity(data: DataFrame): DataFrame = {
+    val ss = sparkSession()
+    import ss.implicits._
+
+    data
+      .withColumnRenamed("hours", "intensity")
+      .where($"type" === "walk")
+      .select("date", "location", "intensity")
+      .where($"intensity" > 0)
+  }
+
+  /**
+   * Create a dataframe containing exercise types.  The dataframe is created using a data set
+   * and a programmatically created schema.
+   * @return A dataframe containing exercise types.
+   */
   def createExerciseTypeTable(): DataFrame = {
     val schema = StructType(Array(
       StructField("id", IntegerType, nullable = false),
@@ -80,6 +103,11 @@ object Main {
     spark.createDataFrame(spark.sparkContext.parallelize(data), schema)
   }
 
+  /**
+   * Create a dataframe containing programming language information & statistics.  The dataframe is
+   *  created using a data set and a string schema.
+   * @return A dataframe containing programming language statistics.
+   */
   def createLanguagesTable(): DataFrame = {
     val schema = "language STRING, first_year_coded INT, total_lines INT, lines ARRAY<INT>"
     val data = Seq(
@@ -108,5 +136,8 @@ object Main {
 
     println("Ordered Long Runs:")
     orderByMileage(longRunDf, descending = true).show()
+
+    println("Long Walk Intensity:")
+    walkIntensity(df).show()
   }
 }

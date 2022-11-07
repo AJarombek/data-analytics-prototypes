@@ -15,6 +15,7 @@ from da_spark_prototypes.main import (
     create_df,
     long_runs,
     order_by_mileage,
+    walk_intensity,
     create_exercise_type_table,
     create_languages_table,
 )
@@ -65,6 +66,14 @@ def test_order_by_mileage_desc(data: DataFrame) -> None:
         miles = row.miles
         assert miles <= prev
         prev = miles
+
+
+def test_walk_intensity(data: DataFrame) -> None:
+    rows = walk_intensity(data).collect()
+    assert len(rows) == 5
+
+    for row in rows:
+        assert row.intensity >= 1
 
 
 def test_create_exercise_type_table() -> None:
