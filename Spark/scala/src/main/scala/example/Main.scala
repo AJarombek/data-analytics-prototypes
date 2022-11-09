@@ -1,6 +1,5 @@
 package example
 
-import example.Main.sparkSession
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
@@ -77,6 +76,15 @@ object Main {
   }
 
   /**
+   * Group exercise data by the exercise type, calculating the total number of miles for each type.
+   * @param data A dataframe containing exercise data.
+   * @return Grouped mileage data in a dataframe.
+   */
+  def groupedExerciseMileage(data: DataFrame): DataFrame = {
+    data.groupBy("type").sum("miles").orderBy(desc("sum(miles)"))
+  }
+
+  /**
    * Create a dataframe containing exercise types.  The dataframe is created using a data set
    * and a programmatically created schema.
    * @return A dataframe containing exercise types.
@@ -115,11 +123,22 @@ object Main {
       Row("Python", 2015, 78_580, Seq(16_740, 19_917, 16_415)),
       Row("Java", 2014, 50_122, Seq(2_042, 5_206, 2_724)),
       Row("TypeScript", 2017, 44_290, Seq(11_830, 23_555, 6_036)),
-      Row("HTML", 2016, 50_122, Seq(2_484, 4_988, 2_571)),
+      Row("HTML", 2016, 29_469, Seq(2_484, 4_988, 2_571)),
     )
 
     val spark = sparkSession()
     spark.createDataFrame(spark.sparkContext.parallelize(data), StructType.fromDDL(schema))
+  }
+
+  /**
+   * Create a dataframe with programming language data, ordered by the most popular languages in the past three years.
+   * @return A dataframe with language data.
+   */
+  def sumRecentYears(): DataFrame = {
+    createLanguagesTable()
+      .withColumn("last_three_years", aggregate(col("lines"), lit(0), (acc, x) => acc + x))
+      .select("language", "total_lines", "last_three_years")
+      .orderBy(desc("last_three_years"))
   }
 
   def main(args: Array[String]): Unit = {
@@ -139,5 +158,17 @@ object Main {
 
     println("Long Walk Intensity:")
     walkIntensity(df).show()
+
+    println("Grouped Exercise Miles:")
+    groupedExerciseMileage(df).show()
+
+    println("Exercise Types:")
+    createExerciseTypeTable().show()
+
+    println("Programming Languages:")
+    createLanguagesTable().show()
+
+    println("Programming Recent Years:")
+    sumRecentYears().show()
   }
 }

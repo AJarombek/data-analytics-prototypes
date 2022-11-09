@@ -69,6 +69,12 @@ class MainSpec extends AnyFunSuite {
     }
   }
 
+  test("grouped exercise mileage") {
+    val df = Main.groupedExerciseMileage(Main.createDF("../data/exercises.json"))
+    val first = df.first()
+    assert(first.getAs[String]("type") == "virtual bike")
+  }
+
   test("create exercise type table") {
     val df = Main.createExerciseTypeTable()
     assert(df.count() == 9)
@@ -77,5 +83,15 @@ class MainSpec extends AnyFunSuite {
   test("create languages table") {
     val df = Main.createLanguagesTable()
     assert(df.count() == 5)
+  }
+
+  test("sum recent years") {
+    val df = Main.sumRecentYears()
+    assert(df.count() == 5)
+
+    val first = df.first()
+    assert(first.getAs[String]("language") == "JavaScript")
+    assert(first.getAs[Int]("total_lines") == 93_692)
+    assert(first.getAs[Int]("last_three_years") == 55_253)
   }
 }

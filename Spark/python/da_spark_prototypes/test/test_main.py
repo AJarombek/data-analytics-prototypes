@@ -18,6 +18,8 @@ from da_spark_prototypes.main import (
     walk_intensity,
     create_exercise_type_table,
     create_languages_table,
+    sum_recent_years,
+    grouped_exercise_mileage,
 )
 
 
@@ -76,6 +78,12 @@ def test_walk_intensity(data: DataFrame) -> None:
         assert row.intensity >= 1
 
 
+def test_grouped_mileage(data: DataFrame) -> None:
+    df = grouped_exercise_mileage(data)
+    first = df.first().asDict()
+    assert first.get('type') == 'virtual bike'
+
+
 def test_create_exercise_type_table() -> None:
     df = create_exercise_type_table()
     assert df.count() == 9
@@ -84,3 +92,13 @@ def test_create_exercise_type_table() -> None:
 def test_create_languages_table() -> None:
     df = create_languages_table()
     assert df.count() == 5
+
+
+def test_sum_recent_years() -> None:
+    df = sum_recent_years()
+    assert df.count() == 5
+
+    first = df.first().asDict()
+    assert first.get('language') == 'JavaScript'
+    assert first.get('total_lines') == 93_692
+    assert first.get('last_three_years') == 55_253

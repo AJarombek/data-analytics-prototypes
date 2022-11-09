@@ -73,6 +73,15 @@ def walk_intensity(data: DataFrame) -> DataFrame:
     )
 
 
+def grouped_exercise_mileage(data: DataFrame) -> DataFrame:
+    """
+    Group exercise data by the exercise type, calculating the total number of miles for each type.
+    :param data: A dataframe containing exercise data.
+    :return: Grouped mileage data in a dataframe.
+    """
+    return data.groupBy("type").sum("miles").orderBy(F.desc("sum(miles)"))
+
+
 def create_exercise_type_table() -> DataFrame:
     """
     Create a dataframe containing exercise types.  The dataframe is created using a data set
@@ -116,10 +125,25 @@ def create_languages_table() -> DataFrame:
         ["Python", 2015, 78_580, [16_740, 19_917, 16_415]],
         ["Java", 2014, 50_122, [2_042, 5_206, 2_724]],
         ["TypeScript", 2017, 44_290, [11_830, 23_555, 6_036]],
-        ["HTML", 2016, 50_122, [2_484, 4_988, 2_571]],
+        ["HTML", 2016, 29_469, [2_484, 4_988, 2_571]],
     ]
 
     return spark.createDataFrame(data, schema)
+
+
+def sum_recent_years():
+    """
+    Create a dataframe with programming language data, ordered by the most popular languages in the past three years.
+    :return: A dataframe with language data.
+    """
+    return (
+        create_languages_table()
+        .withColumn(
+            "last_three_years", F.aggregate("lines", F.lit(0), lambda acc, x: acc + x)
+        )
+        .select("language", "total_lines", "last_three_years")
+        .orderBy(F.desc("last_three_years"))
+    )
 
 
 if __name__ == '__main__':
@@ -143,8 +167,14 @@ if __name__ == '__main__':
     print("Long Walk Intensity:")
     print(walk_intensity(df).show())
 
+    print("Grouped Exercise Miles:")
+    print(grouped_exercise_mileage(df).show())
+
     print("Exercise Types:")
     print(create_exercise_type_table().show())
 
     print("Programming Languages:")
     print(create_languages_table().show())
+
+    print("Programming Recent Years:")
+    print(sum_recent_years().show())
