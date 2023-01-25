@@ -28,7 +28,7 @@ jobs:
       - run: echo "Checked out branch '${{ github.ref }}' of the ${{ github.repository }} repository"
 
       - name: Run LLVM Basics Code Sample
-        run: >
+        run: |
           plz --version
           plz build //... -i llvm -vvv
 
